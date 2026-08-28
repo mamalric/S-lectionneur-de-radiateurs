@@ -1,9 +1,9 @@
   <!-- ===================== 1. PARAMETRES ===================== -->
   <div class="panel" data-view="dim">
-    <h2 onclick="toggle(this)">1. Paramètres de sélection <span class="chev">v</span></h2>
+    <h2 onclick="toggle(this)" data-ico="parametres">1. Paramètres de sélection <span class="chev" data-ico="chevron_bas" data-ico-taille="15"></span></h2>
     <div class="body">
       <div class="paramsec rad">
-        <div class="paramhead">Paramètres radiateurs</div>
+        <div class="paramhead" data-ico="radiateur" data-ico-taille="15">Paramètres radiateurs</div>
         <div class="grid">
           <div class="fld">
             <label>Énergie radiateur</label>
@@ -16,7 +16,7 @@
           <div class="fld">
             <label>Modèle de radiateur</label>
             <select id="model"></select>
-            <a id="modelLink" class="prodlink noprint" target="_blank" rel="noopener" style="display:none">Ouvrir la fiche produit Finimetal</a>
+            <a id="modelLink" class="prodlink noprint" target="_blank" rel="noopener" data-ico="externe" data-ico-taille="13" style="display:none">Ouvrir la fiche produit Finimetal</a>
             <span class="hint" id="modelHint">Gamme Finimetal</span>
           </div>
           <div class="fld waterOnly">
@@ -74,7 +74,7 @@
         </div>
       </div>
       <div class="paramsec ss">
-        <div class="paramhead">Paramètres sèche-serviettes</div>
+        <div class="paramhead" data-ico="seche_serviette" data-ico-taille="15">Paramètres sèche-serviettes</div>
         <div class="grid">
           <div class="fld">
             <label>Énergie sèche-serviette</label>
@@ -88,7 +88,7 @@
           <div class="fld">
             <label>Modèle sèche-serviette</label>
             <select id="ssModel"></select>
-            <a id="ssModelLink" class="prodlink noprint" target="_blank" rel="noopener" style="display:none">Ouvrir la fiche produit Finimetal</a>
+            <a id="ssModelLink" class="prodlink noprint" target="_blank" rel="noopener" data-ico="externe" data-ico-taille="13" style="display:none">Ouvrir la fiche produit Finimetal</a>
             <span class="hint">Auto sur les pièces "salle de bain / salle d'eau"</span>
           </div>
           <div class="fld ssRegime">
@@ -123,9 +123,9 @@
       <div class="live" id="liveBox"></div>
 
       <div class="toolbar noprint" style="margin-top:14px">
-        <button class="btn" id="btnRecalc" onclick="recalcAll()">Réinitialiser les choix manuels</button>
-        <button class="btn sec" id="btnCsv" onclick="exportCSV()">Exporter le bordereau (CSV)</button>
-        <button class="btn sec" id="btnPrint" onclick="window.print()">Imprimer / PDF</button>
+        <button class="btn" id="btnRecalc" data-ico="reinitialiser" onclick="recalcAll()">Réinitialiser les choix manuels</button>
+        <button class="btn sec" id="btnCsv" data-ico="csv" onclick="exportCSV()">Exporter le bordereau (CSV)</button>
+        <button class="btn sec" id="btnPrint" data-ico="imprimer" onclick="window.print()">Imprimer / PDF</button>
       </div>
     </div>
   </div>

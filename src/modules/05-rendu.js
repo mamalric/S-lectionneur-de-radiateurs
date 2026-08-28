@@ -47,7 +47,7 @@ function render(){
       : `<td>${selType(id,e,S)}</td><td>${selHeight(id,e,S)}</td><td>${selLen(id,e,S)}</td>`;
     html+=`<tr>`+
       `<td class="l">${esc(r.apt)}</td><td class="l">${esc(r.piece)}${e.manual?' <span class="manflag" title="Choix manuel">*</span>':''}</td>`+
-      `<td>${bath?'<span class="emlab em-ss">SS</span>':'<span class="emlab em-rad">RAD</span>'}</td>`+
+      `<td>${bath?`<span class="emlab em-ss">${ico('seche_serviette',12)}SS</span>`:`<span class="emlab em-rad">${ico('radiateur',12)}RAD</span>`}</td>`+
       `<td>${e.Ti}</td>`+
       `<td>${nf1.format(r.surf||0)}</td>`+
       `<td><b>${nf.format(Math.round(e.Q))}</b></td>`+
@@ -109,7 +109,7 @@ function renderRoomMgmt(){
       `<td class="l">${esc(r.apt||'')}</td>`+
       `<td class="l"><input type="text" style="width:160px" value="${attr(r.piece)}" onchange="setPiece(${r.id},this.value)"></td>`+
       `<td>${r.Ti}</td><td>${nf1.format(r.surf||0)}</td><td>${nf.format(reqOf(S,r))}</td>`+
-      `<td><span class="emlab ${isTowel(r)?'em-ss':'em-rad'}" style="margin-right:6px">${isTowel(r)?'SS':'RAD'}</span>`+
+      `<td><span class="emlab ${isTowel(r)?'em-ss':'em-rad'}" style="margin-right:6px">`+`${ico(isTowel(r)?'seche_serviette':'radiateur',12)}${isTowel(r)?'SS':'RAD'}</span>`+
       `<select class="cell" style="max-width:140px" onchange="setEmitter(${r.id},this.value)">`+
         `<option value="auto" ${em==='auto'?'selected':''}>Auto (${autoss?'sèche-serviette':'radiateur'})</option>`+
         `<option value="panneau" ${em==='panneau'?'selected':''}>Radiateur panneau</option>`+
@@ -148,12 +148,12 @@ function setLink(id,prod){ const a=$(id); if(!a) return; const u=prod&&prod.url;
   else { a.style.display='none'; a.removeAttribute('href'); } }
 function updateModelLinks(S){ setLink('modelLink', radProduct(S)); setLink('ssModelLink', ssProduct(S)); }
 function renderLive(S){
-  const radReg = (S.radTe>0 && S.radTs>0)? `${S.radTe}/${S.radTs} °C` : '<span style="color:var(--ko)">non saisi</span>';
-  const ssReg = (S.ssTe>0 && S.ssTs>0)? `${S.ssTe}/${S.ssTs} °C` : '<span style="color:var(--ko)">non saisi</span>';
+  const radReg = (S.radTe>0 && S.radTs>0)? `${S.radTe}/${S.radTs} °C` : '<span style="color:var(--haute)">non saisi</span>';
+  const ssReg = (S.ssTe>0 && S.ssTs>0)? `${S.ssTe}/${S.ssTs} °C` : '<span style="color:var(--haute)">non saisi</span>';
   const ssP=ssProduct(S), ssFixed=(S.ssEnergy==='elec');
   const parts=[
-    `<b style="color:var(--bleu2)">Radiateurs ${isElec(S)?'électriques':'eau'}</b> : ${esc(radModelName(S))}`+(isElec(S)?'':` - régime <b>${radReg}</b>`),
-    `<b style="color:var(--accent)">Sèche-serviettes ${SS_LABEL[S.ssEnergy]||''}</b> : ${esc(ssP?ssP.name:'(aucun)')}`+(ssFixed?'':` - régime <b>${ssReg}</b>`)
+    `<b style="color:var(--primaire-encre)">${ico(isElec(S)?'electrique':'eau',14)} Radiateurs ${isElec(S)?'électriques':'eau'}</b> : ${esc(radModelName(S))}`+(isElec(S)?'':` - régime <b>${radReg}</b>`),
+    `<b style="color:var(--moyenne)">${ico('seche_serviette',14)} Sèche-serviettes ${SS_LABEL[S.ssEnergy]||''}</b> : ${esc(ssP?ssP.name:'(aucun)')}`+(ssFixed?'':` - régime <b>${ssReg}</b>`)
   ];
   $('liveBox').innerHTML = parts.map(p=>`<div>${p}</div>`).join('');
 }
@@ -170,14 +170,14 @@ function renderSynth(S){
   if(nElec) parts.push(`${nElec} radiateur(s) élec`);
   if(nSS) parts.push(`${nSS} sèche-serviette(s)`);
   $('synth').innerHTML=
-    card('Puissance requise', nf.format(Math.round(req)), 'W ('+nf1.format(req/1000)+' kW)')+
-    card('Puissance émise', nf.format(Math.round(emit)), 'W')+
-    card('Couverture globale', ROOMS.length?nf1.format(cov):'-', '%')+
-    card('Nombre d\'émetteurs', N, parts.join(' + ')||'-')+
-    card('Pièces en choix manuel', nMan, nMan?'ajustées à la main':'aucune', nMan?'var(--accent)':'')+
-    card('Pièces hors tolérance', ko, ko?'à revoir':'OK', ko?'var(--ko)':'var(--ok)');
+    card('Puissance requise', nf.format(Math.round(req)), 'W ('+nf1.format(req/1000)+' kW)', '', 'puissance')+
+    card('Puissance émise', nf.format(Math.round(emit)), 'W', '', 'radiateur')+
+    card('Couverture globale', ROOMS.length?nf1.format(cov):'-', '%', '', 'synthese')+
+    card('Nombre d\'émetteurs', N, parts.join(' + ')||'-', '', 'types')+
+    card('Pièces en choix manuel', nMan, nMan?'ajustées à la main':'aucune', nMan?'var(--moyenne)':'', 'crayon')+
+    card('Pièces hors tolérance', ko, ko?'à revoir':'OK', ko?'var(--haute)':'var(--ok)', ko?'attention':'coche_cercle');
 }
-function card(k,v,u,color){ return `<div class="card"><div class="k">${k}</div>`+
+function card(k,v,u,color,icone){ return `<div class="card"><div class="k">${icone?ico(icone,13):''}${k}</div>`+
   `<div class="v" ${color?`style="color:${color}"`:''}>${v}</div><div class="u">${u}</div></div>`; }
 function renderBordereau(S){
   const pan={}, it={};

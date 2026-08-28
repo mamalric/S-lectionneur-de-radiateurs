@@ -16,8 +16,8 @@ $('projName').addEventListener('input',()=>{ PROJECT_NAME=$('projName').value; p
 $('fileSlk').addEventListener('change',e=>{ handleFiles(e.target.files); e.target.value=''; });
 $('fileJson').addEventListener('change',e=>{ handleJson(e.target.files[0]); e.target.value=''; });
 (function(){ const dz=$('dropzone');
-  ['dragenter','dragover'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();dz.style.background='#eef6ff';dz.style.borderColor='var(--bleu2)';}));
-  ['dragleave','drop'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();dz.style.background='#fbfdff';dz.style.borderColor='var(--bord)';}));
+  ['dragenter','dragover'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();dz.style.background='var(--primaire-fond)';dz.style.borderColor='var(--primaire)';}));
+  ['dragleave','drop'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();dz.style.background='var(--papier-2)';dz.style.borderColor='var(--ligne)';}));
   dz.addEventListener('drop',e=>{ handleFiles(e.dataTransfer.files); });
   dz.addEventListener('click',()=>$('fileSlk').click());
 })();

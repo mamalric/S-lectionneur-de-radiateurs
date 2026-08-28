@@ -1,6 +1,6 @@
   <!-- ===================== 0. PROJET / IMPORT ===================== -->
   <div class="panel" data-view="projet">
-    <h2 onclick="toggle(this)">0. Projet (fichier .json) et import Pléiades (.slk) <span class="chev">v</span></h2>
+    <h2 onclick="toggle(this)" data-ico="dossier">0. Projet (fichier .json) et import Pléiades (.slk) <span class="chev" data-ico="chevron_bas" data-ico-taille="15"></span></h2>
     <div class="body">
       <div class="grid">
         <div class="fld">
@@ -14,19 +14,20 @@
         </div>
         <div class="fld">
           <label>Projet chargé</label>
-          <div id="projInfo" style="padding:6px 0;font-weight:600;color:var(--bleu)"></div>
+          <div id="projInfo" style="padding:6px 0;font-weight:600;color:var(--primaire-encre)"></div>
         </div>
       </div>
-      <div id="dropzone" style="margin-top:12px;border:2px dashed var(--bord);border-radius:8px;
-        padding:16px;text-align:center;color:var(--muted);background:#fbfdff;cursor:pointer">
+      <div id="dropzone" style="margin-top:12px;border:2px dashed var(--ligne);border-radius:8px;
+        padding:16px;text-align:center;color:var(--discret);background:var(--papier-2);cursor:pointer"
+        data-ico="importer" data-ico-taille="20">
 Glissez-déposez ici un ou plusieurs fichiers <b>.slk</b> (déperditions Pléiades, 1 par bâtiment) - ils s'ajoutent au projet. Ou un fichier projet <b>.json</b>.
       </div>
       <div id="importMsg" style="margin-top:10px;font-size:13px"></div>
       <input type="file" id="fileJson" accept=".json,application/json" style="display:none">
       <div class="toolbar noprint" style="margin-top:14px">
-        <button class="btn" onclick="openProject()">Ouvrir un projet (.json)</button>
-        <button class="btn" onclick="saveProject()">Enregistrer le projet (.json)</button>
-        <button class="btn sec" onclick="newProject()">Nouveau projet (vide)</button>
+        <button class="btn" data-ico="dossier" onclick="openProject()">Ouvrir un projet (.json)</button>
+        <button class="btn" data-ico="enregistrer" onclick="saveProject()">Enregistrer le projet (.json)</button>
+        <button class="btn sec" data-ico="nouveau" onclick="newProject()">Nouveau projet (vide)</button>
       </div>
       <div class="note" style="margin-top:8px">
         Un projet = un fichier <b>.json</b> (pièces, régime, choix manuels, catalogue). "Enregistrer" écrit dans le fichier

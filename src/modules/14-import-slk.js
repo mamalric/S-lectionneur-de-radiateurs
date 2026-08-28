@@ -85,5 +85,5 @@ function handleFiles(files){
 }
 function handleFile(file){ handleFiles(file?[file]:[]); }
 function msg(t,kind){ const el=$('importMsg'); el.textContent=t;
-  el.style.color=kind==='ko'?'var(--ko)':(kind==='ok'?'var(--ok)':'var(--muted)'); }
+  el.style.color=kind==='ko'?'var(--haute)':(kind==='ok'?'var(--ok)':'var(--discret)'); }
 
