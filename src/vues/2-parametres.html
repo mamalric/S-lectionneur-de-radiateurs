@@ -1,0 +1,132 @@
+  <!-- ===================== 1. PARAMETRES ===================== -->
+  <div class="panel" data-view="dim">
+    <h2 onclick="toggle(this)">1. Paramètres de sélection <span class="chev">v</span></h2>
+    <div class="body">
+      <div class="paramsec rad">
+        <div class="paramhead">Paramètres radiateurs</div>
+        <div class="grid">
+          <div class="fld">
+            <label>Énergie radiateur</label>
+            <select id="radEnergy">
+              <option value="eau">Eau chaude</option>
+              <option value="elec">Électrique</option>
+            </select>
+            <span class="hint">Radiateurs à eau (panneaux, verticaux, décoratifs) ou électriques</span>
+          </div>
+          <div class="fld">
+            <label>Modèle de radiateur</label>
+            <select id="model"></select>
+            <a id="modelLink" class="prodlink noprint" target="_blank" rel="noopener" style="display:none">Ouvrir la fiche produit Finimetal</a>
+            <span class="hint" id="modelHint">Gamme Finimetal</span>
+          </div>
+          <div class="fld waterOnly">
+            <label>Type de radiateur</label>
+            <div class="chips" id="allowTypes">
+              <label class="chip"><input type="checkbox" value="11" checked> Type 11</label>
+              <label class="chip"><input type="checkbox" value="21" checked> Type 21</label>
+              <label class="chip"><input type="checkbox" value="22" checked> Type 22</label>
+              <label class="chip"><input type="checkbox" value="33" checked> Type 33</label>
+            </div>
+            <span class="hint">Types candidats (le plus fin est privilégié)</span>
+          </div>
+          <div class="fld waterOnly">
+            <label>Hauteur mini / maxi (mm)</label>
+            <div class="pair"><div><select id="hMin"></select></div><div class="sep">à</div><div><select id="hMax"></select></div></div>
+          </div>
+          <div class="fld waterOnly">
+            <label>Longueur mini / maxi (mm)</label>
+            <div class="pair"><div><select id="lMin"></select></div><div class="sep">à</div><div><select id="lMax"></select></div></div>
+            <span class="hint">Longueurs de la gamme du modèle</span>
+          </div>
+          <div class="fld radRegime">
+            <label>Régime d'eau radiateur : aller / retour (°C)</label>
+            <div class="pair">
+              <div><input type="number" id="radTe" value="" step="1" min="25" max="90" placeholder="aller"></div>
+              <div class="sep">/</div>
+              <div><input type="number" id="radTs" value="" step="1" min="20" max="85" placeholder="retour"></div>
+            </div>
+            <div class="noprint" style="margin-top:5px;display:flex;gap:4px;flex-wrap:wrap">
+              <button type="button" class="btn sec mini" onclick="setRegimeFields('rad',75,65)">75/65</button>
+              <button type="button" class="btn sec mini" onclick="setRegimeFields('rad',55,45)">55/45</button>
+              <button type="button" class="btn sec mini" onclick="setRegimeFields('rad',45,35)">45/35</button>
+              <button type="button" class="btn sec mini" onclick="setRegimeFields('rad',40,30)">40/30</button>
+            </div>
+            <span class="hint">Température de l'eau des radiateurs</span>
+          </div>
+          <div class="fld">
+            <label>Tolérance radiateur mini / maxi (%)</label>
+            <div class="pair"><div><input type="number" id="radTolMin" value="0" step="1" min="-30" max="30"></div><div class="sep">/</div><div><input type="number" id="radTolMax" value="20" step="1" min="-30" max="30"></div></div>
+            <span class="hint">Écart admis / puissance requise (-30 / +30 %)</span>
+          </div>
+          <div class="fld">
+            <label>Plusieurs radiateurs au-delà de (m²)</label>
+            <input type="number" id="seuil2" value="25" step="1" min="0" max="200">
+            <span class="hint">2 radiateurs si surface &gt; ce seuil (0 = désactivé)</span>
+          </div>
+          <div class="fld waterOnly">
+            <label>Critère de sélection auto</label>
+            <select id="criterion">
+              <option value="thin">Type le plus fin</option>
+              <option value="compact">Encombrement mini (longueur)</option>
+              <option value="lowh">Hauteur mini</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="paramsec ss">
+        <div class="paramhead">Paramètres sèche-serviettes</div>
+        <div class="grid">
+          <div class="fld">
+            <label>Énergie sèche-serviette</label>
+            <select id="ssEnergy">
+              <option value="eau">Eau chaude</option>
+              <option value="elec">Électrique</option>
+              <option value="mixte">Mixte (eau + élec)</option>
+            </select>
+            <span class="hint">Filtre les modèles disponibles</span>
+          </div>
+          <div class="fld">
+            <label>Modèle sèche-serviette</label>
+            <select id="ssModel"></select>
+            <a id="ssModelLink" class="prodlink noprint" target="_blank" rel="noopener" style="display:none">Ouvrir la fiche produit Finimetal</a>
+            <span class="hint">Auto sur les pièces "salle de bain / salle d'eau"</span>
+          </div>
+          <div class="fld ssRegime">
+            <label>Régime d'eau sèche-serviette : aller / retour (°C)</label>
+            <div class="pair">
+              <div><input type="number" id="ssTe" value="" step="1" min="25" max="90" placeholder="aller"></div>
+              <div class="sep">/</div>
+              <div><input type="number" id="ssTs" value="" step="1" min="20" max="85" placeholder="retour"></div>
+            </div>
+            <div class="noprint" style="margin-top:5px;display:flex;gap:4px;flex-wrap:wrap">
+              <button type="button" class="btn sec mini" onclick="setRegimeFields('ss',75,65)">75/65</button>
+              <button type="button" class="btn sec mini" onclick="setRegimeFields('ss',55,45)">55/45</button>
+              <button type="button" class="btn sec mini" onclick="setRegimeFields('ss',45,35)">45/35</button>
+              <button type="button" class="btn sec mini" onclick="setRegimeFields('ss',40,30)">40/30</button>
+            </div>
+            <span class="hint">Température de l'eau (énergie eau et mixte)</span>
+          </div>
+          <div class="fld">
+            <label>Tolérance sèche-serviette mini / maxi (%)</label>
+            <div class="pair"><div><input type="number" id="ssTolMin" value="0" step="1" min="-30" max="30"></div><div class="sep">/</div><div><input type="number" id="ssTolMax" value="20" step="1" min="-30" max="30"></div></div>
+            <span class="hint">Écart admis / puissance requise (-30 / +30 %)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note" style="margin-top:6px">
+        La <b>température ambiante</b> (consigne, colonne Ti) et la <b>puissance requise</b> (colonne <b>Total</b> des déperditions
+        Pléiades, relance incluse) sont lues depuis l'export Pléiades et <b>ne sont pas modifiables ici</b>.
+        Pour les changer, ajustez le calcul dans Pléiades puis ré-importez le fichier .slk.
+      </div>
+
+      <div class="live" id="liveBox"></div>
+
+      <div class="toolbar noprint" style="margin-top:14px">
+        <button class="btn" id="btnRecalc" onclick="recalcAll()">Réinitialiser les choix manuels</button>
+        <button class="btn sec" id="btnCsv" onclick="exportCSV()">Exporter le bordereau (CSV)</button>
+        <button class="btn sec" id="btnPrint" onclick="window.print()">Imprimer / PDF</button>
+      </div>
+    </div>
+  </div>
+
