@@ -3,7 +3,7 @@
 // sens, il ne peut donc pas horodater la construction. A mettre a jour en meme temps
 // que le champ maj de FICHE.md.
 const APP = {
-  nom: 'Sélectionneur de radiateurs Finimetal',
+  nom: 'Dimensionnement émetteurs Finimetal',
   version: '3',
   maj: '2026-08-28',
   formatProjet: 6,

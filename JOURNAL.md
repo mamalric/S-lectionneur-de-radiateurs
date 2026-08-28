@@ -35,6 +35,8 @@
 - Nouveau fichier src/donnees/version.js portant l'identité de l'outil. Le numéro de version et la date y sont saisis à la main, volontairement : build.py doit rester déterministe pour que --verifier ait un sens, il ne peut donc pas horodater la construction. À mettre à jour en même temps que le champ maj de FICHE.md.
 - Le format de fichier projet, jusque-là écrit en dur dans projectData(), vient maintenant de cette même constante, pour que le panneau et le fichier exporté ne puissent pas diverger.
 - .bouton-theme renommé en .bouton-icone : le gabarit de bouton carré sert désormais au thème, à l'engrenage et à la fermeture du panneau.
+- Titre renommé "Sélectionneur de radiateurs Finimetal (panneaux)" -> "Dimensionnement émetteurs Finimetal" : balise <title>, <h1>, constante APP.nom (désormais aussi affichée dans le panneau À propos), commentaire d'en-tête de style.css et titre de la page de redirection index.html.
+- Volontairement inchangés : l'id de FICHE.md (jamais modifié par consigne du modèle), la clé localStorage finimetal_selecteur_v5 (la changer aurait effacé les réglages déjà enregistrés chez l'utilisateur), l'identifiant app dans les .json de projet déjà sauvegardés, et le nom du fichier HTML qui fixe l'URL GitHub Pages.
 
 ## 2026-08-18
 - Fiche créée à partir du modèle `outil` lors de la mise en place du catalogue. Projet existant depuis le 2026-07-07, dernière activité observée le 2026-07-09.

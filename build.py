@@ -83,13 +83,13 @@ def page_index():
         '<html lang="fr">\n'
         "<head>\n"
         '<meta charset="utf-8">\n'
-        "<title>Sélectionneur de radiateurs Finimetal</title>\n"
+        "<title>Dimensionnement émetteurs Finimetal</title>\n"
         + lien_favicon() +
         f'<link rel="canonical" href="{cible}">\n'
         f'<meta http-equiv="refresh" content="0; url={cible}">\n'
         "</head>\n"
         "<body>\n"
-        f'<p>Redirection vers <a href="{cible}">le sélectionneur de radiateurs</a>.</p>\n'
+        f'<p>Redirection vers <a href="{cible}">l\'outil de dimensionnement</a>.</p>\n'
         "</body>\n"
         "</html>\n"
     ).encode("utf-8")

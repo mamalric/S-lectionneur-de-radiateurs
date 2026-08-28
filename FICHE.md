@@ -1,6 +1,6 @@
 ---
 id: 2026-07-07-selectionneur-de-radiateurs    # AAAA-MM-JJ-slug, écrit une fois, jamais modifié (même si le dossier bouge)
-nom: Sélectionneur de radiateurs Finimetal
+nom: Dimensionnement émetteurs Finimetal
 type: outil                                   # application | outil | documentation | travail | affaire
 statut: termine                               # idee | actif | pause | termine | abandonne
 pitch: Sélection de radiateurs Finimetal selon puissance et régime d'eau, page HTML, version 3.
@@ -12,7 +12,7 @@ usage: ouvrir le fichier dans un navigateur
 perime_si:
 ---
 
-# Sélectionneur de radiateurs Finimetal
+# Dimensionnement émetteurs Finimetal
 
 ## Objectif
 Outil d'aide au prédimensionnement des radiateurs panneaux et sèche-serviettes Finimetal (marché France) pièce par pièce : import des déperditions Pléiades (.slk, un fichier par bâtiment), choix du modèle, des types (11, 21, 22, 33), des hauteurs et longueurs admises, du régime d'eau aller/retour et des tolérances, puis sélection automatique (type le plus fin, encombrement mini ou hauteur mini) avec choix manuel possible. Méthode conforme au calculateur officiel Finimetal : DT = (Te + Ts)/2 - Ti, correction f = (DT/50)^n par type et hauteur, puissances W/m à DT50 selon EN 442. Produit une synthèse, un bordereau quantitatif par modèle exportable en CSV et une impression PDF ; un projet s'enregistre en .json.

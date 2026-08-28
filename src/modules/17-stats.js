@@ -48,6 +48,7 @@ function renderStats(){
 
   const blocs = [
     groupeStats('Application', 'info', [
+      ligne('Nom', APP.nom),
       ligne('Version', APP.version),
       ligne('Dernière mise à jour', APP.maj),
       ligne('Format de fichier projet', 'version ' + APP.formatProjet),
