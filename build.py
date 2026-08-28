@@ -65,6 +65,14 @@ def assembler():
     return b"".join(lignes)
 
 
+def lien_favicon():
+    """Recupere la balise d'icone du gabarit, pour ne la definir qu'a un seul endroit."""
+    for ligne in GABARIT.read_text(encoding="utf-8").splitlines():
+        if ligne.lstrip().startswith('<link rel="icon"'):
+            return ligne.strip() + "\n"
+    return ""
+
+
 def page_index():
     """Page de redirection vers le fichier versionne, pour GitHub Pages."""
     cible = SORTIE.name
@@ -76,6 +84,7 @@ def page_index():
         "<head>\n"
         '<meta charset="utf-8">\n'
         "<title>Sélectionneur de radiateurs Finimetal</title>\n"
+        + lien_favicon() +
         f'<link rel="canonical" href="{cible}">\n'
         f'<meta http-equiv="refresh" content="0; url={cible}">\n'
         "</head>\n"

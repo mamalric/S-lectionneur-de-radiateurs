@@ -23,6 +23,11 @@
 - Deux champs échappaient encore au thème, signalés sur capture. Le champ fichier n'était couvert par aucune règle, mon sélecteur ne visait que number, text et select : ajout de input[type=file] et surtout de ::file-selector-button, redessiné comme un bouton secondaire. Les cases à cocher gardaient le rendu natif, dont l'aplat clair d'accent-color pesait lourd en thème sombre : passées en appearance:none avec une boîte de 15 px et la coche en image de fond, reprise du tracé Lucide "ok".
 - Un data URI ne peut pas lire une variable CSS, d'où une seule surcharge sombre pour la couleur de la coche. En contrepartie, la couleur du texte posé sur un aplat de primaire est devenue le jeton --sur-primaire, ce qui a supprimé cinq surcharges [data-theme="dark"] qui la redéfinissaient à l'identique sur le logo, le compteur d'onglet, les boutons, les pastilles d'émetteur et les bandeaux de section.
 - Vérifié dans les deux thèmes : couleurs calculées conformes, coche blanche en clair et sombre en sombre, clic réel sur une pastille qui bascule la case et déclenche le surlignage.
+- Icône d'onglet ajoutée : la page n'avait aucun link rel="icon". Pastille olive à coins arrondis portant le glyphe Lucide "heater", un radiateur à panneau, plus parlant que le thermomètre pour identifier l'outil. Même construction que le favicon de planif, donc les deux outils se reconnaissent comme une famille.
+- Le glyphe est en data URI, donc toujours aucune requête externe et il fonctionne en file://. Les deux voyants du tracé Lucide sont retirés dans le favicon, invisibles en dessous de 20 px, mais conservés dans l'icône radiateur_panneau du jeu réutilisable.
+- Le logo de l'en-tête, jusque-là un thermomètre, reprend le même glyphe : sans ça l'onglet et l'en-tête auraient montré deux marques différentes.
+- build.py extrait la balise d'icône du gabarit pour la réinjecter dans index.html, plutôt que de la dupliquer : sinon la page de redirection GitHub Pages afficherait l'icône par défaut le temps du renvoi.
+- Taille intrinsèque du SVG fixée à 32x32 : sans width ni height, les navigateurs retombent sur 150x150 par défaut.
 
 ## 2026-08-18
 - Fiche créée à partir du modèle `outil` lors de la mise en place du catalogue. Projet existant depuis le 2026-07-07, dernière activité observée le 2026-07-09.
