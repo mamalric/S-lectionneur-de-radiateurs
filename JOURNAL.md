@@ -28,6 +28,13 @@
 - Le logo de l'en-tête, jusque-là un thermomètre, reprend le même glyphe : sans ça l'onglet et l'en-tête auraient montré deux marques différentes.
 - build.py extrait la balise d'icône du gabarit pour la réinjecter dans index.html, plutôt que de la dupliquer : sinon la page de redirection GitHub Pages afficherait l'icône par défaut le temps du renvoi.
 - Taille intrinsèque du SVG fixée à 32x32 : sans width ni height, les navigateurs retombent sur 150x150 par défaut.
+- Glyphes remplacés à la demande : le radiateur passe du thermomètre au tracé Lucide heater complet, voyants compris, et le sèche-serviette passe de la baignoire à towel-rack. Favicon et logo d'en-tête alignés sur le heater complet, les deux voyants que j'avais retirés du favicon sont réintégrés.
+- Le doublon radiateur_panneau, créé au tour précédent quand radiateur était encore un thermomètre, est supprimé : radiateur est désormais le heater, il n'y avait plus de raison d'avoir deux noms.
+- Engrenage ajouté en haut à droite, à côté du bouton de thème, ouvrant un panneau À propos dans un <dialog> natif : fermeture par le bouton, par un clic sur le fond et par Échap sans code supplémentaire. Le tracé reglages hérité de planif étant un jeu de curseurs et non un engrenage, le vrai settings de Lucide a été ajouté sous le nom engrenage.
+- Le panneau affiche la version, la date de dernière mise à jour, le format de fichier projet et la méthode, puis des compteurs recalculés à chaque ouverture : 78 produits, 6 770 références, 13 modèles à puissance linéaire, 444 Ko de catalogue embarqué, la répartition par famille, et l'état du projet en cours. Rien n'est recopié à la main, donc les chiffres ne pourront pas mentir après une mise à jour du catalogue.
+- Nouveau fichier src/donnees/version.js portant l'identité de l'outil. Le numéro de version et la date y sont saisis à la main, volontairement : build.py doit rester déterministe pour que --verifier ait un sens, il ne peut donc pas horodater la construction. À mettre à jour en même temps que le champ maj de FICHE.md.
+- Le format de fichier projet, jusque-là écrit en dur dans projectData(), vient maintenant de cette même constante, pour que le panneau et le fichier exporté ne puissent pas diverger.
+- .bouton-theme renommé en .bouton-icone : le gabarit de bouton carré sert désormais au thème, à l'engrenage et à la fermeture du panneau.
 
 ## 2026-08-18
 - Fiche créée à partir du modèle `outil` lors de la mise en place du catalogue. Projet existant depuis le 2026-07-07, dernière activité observée le 2026-07-09.

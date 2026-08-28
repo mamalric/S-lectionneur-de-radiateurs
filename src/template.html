@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light dark">
 <!-- Icone d'onglet : SVG en data URI, donc aucune requête externe et fonctionne en file://. -->
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%237da32f'/%3E%3Cg transform='translate(4 4)' fill='none' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M11 8c2-3-2-3 0-6'/%3E%3Cpath d='M15.5 8c2-3-2-3 0-6'/%3E%3Cpath d='M10 16v-4'/%3E%3Cpath d='M14 16v-4'/%3E%3Cpath d='M18 16v-4'/%3E%3Cpath d='M20 6a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h3'/%3E%3Cpath d='M5 20v2'/%3E%3Cpath d='M19 20v2'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%237da32f'/%3E%3Cg transform='translate(4 4)' fill='none' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M11 8c2-3-2-3 0-6'/%3E%3Cpath d='M15.5 8c2-3-2-3 0-6'/%3E%3Cpath d='M6 10h.01'/%3E%3Cpath d='M6 14h.01'/%3E%3Cpath d='M10 16v-4'/%3E%3Cpath d='M14 16v-4'/%3E%3Cpath d='M18 16v-4'/%3E%3Cpath d='M20 6a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h3'/%3E%3Cpath d='M5 20v2'/%3E%3Cpath d='M19 20v2'/%3E%3C/g%3E%3C/svg%3E">
 <title>Sélectionneur de radiateurs Finimetal</title>
 <style>
 <!--@include: style.css -->
@@ -15,14 +15,15 @@
 </head>
 <body>
 <header>
-  <span class="logo"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 8c2-3-2-3 0-6"/><path d="M15.5 8c2-3-2-3 0-6"/><path d="M10 16v-4"/><path d="M14 16v-4"/><path d="M18 16v-4"/><path d="M20 6a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h3"/><path d="M5 20v2"/><path d="M19 20v2"/></svg></span>
+  <span class="logo"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 8c2-3-2-3 0-6"/><path d="M15.5 8c2-3-2-3 0-6"/><path d="M6 10h.01"/><path d="M6 14h.01"/><path d="M10 16v-4"/><path d="M14 16v-4"/><path d="M18 16v-4"/><path d="M20 6a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h3"/><path d="M5 20v2"/><path d="M19 20v2"/></svg></span>
   <div class="titre">
     <h1>Sélectionneur de radiateurs Finimetal (panneaux)</h1>
     <span class="sub" id="hdrSub">Dimensionnement sur régime unique à partir des déperditions Pléiades</span>
   </div>
   <span class="espace"></span>
   <div class="badge"><svg class="ico" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 20H2"/><path d="M11 4.562v16.157a1 1 0 0 0 1.242.97L19 20V5.562a2 2 0 0 0-1.515-1.94l-4-1A2 2 0 0 0 11 4.561z"/><path d="M11 4H8a2 2 0 0 0-2 2v14"/><path d="M14 12h.01"/><path d="M22 20h-3"/></svg><span id="hdrBadge"></span></div>
-  <button type="button" class="bouton-theme noprint" id="btnTheme" aria-label="Changer de thème"></button>
+  <button type="button" class="bouton-icone noprint" id="btnTheme" aria-label="Changer de thème"></button>
+  <button type="button" class="bouton-icone noprint" id="btnStats" data-ico="engrenage" aria-label="À propos et statistiques" title="À propos de l'outil"></button>
 </header>
 
 <div class="wrap">
@@ -44,7 +45,17 @@
   <p class="note">Outil d'aide au prédimensionnement. Les références définitives sont à valider sur le configurateur Finimetal en vigueur.</p>
 </div>
 
+<dialog id="dlgStats" class="modale noprint">
+  <div class="modale-tete">
+    <h2 data-ico="engrenage">À propos de l'outil</h2>
+    <span class="espace"></span>
+    <button type="button" class="bouton-icone" id="btnStatsFermer" data-ico="fermer" aria-label="Fermer"></button>
+  </div>
+  <div class="modale-corps" id="statsCorps"></div>
+</dialog>
+
 <script>
+<!--@include: donnees/version.js -->
 <!--@include: donnees/modeles.js -->
 <!--@include: donnees/catalogue-complet.js -->
 <!--@include: donnees/acces-modeles.js -->
@@ -65,6 +76,7 @@
 <!--@include: modules/14-import-slk.js -->
 <!--@include: modules/15-init.js -->
 <!--@include: modules/16-theme.js -->
+<!--@include: modules/17-stats.js -->
 </script>
 </body>
 </html>

@@ -1,5 +1,5 @@
 /* ============================ PROJET JSON (1 projet = 1 fichier) ============================ */
-function projectData(){ return {app:'finimetal-selecteur-radiateurs',version:6,
+function projectData(){ return {app:'finimetal-selecteur-radiateurs',version:APP.formatProjet,
   name:PROJECT_NAME, rooms:ROOMS, overrides, settings:settingsToStore()}; }
 function loadProjectData(d){
   if(!d || !Array.isArray(d.rooms)) throw new Error("fichier projet invalide (pas de pièces).");

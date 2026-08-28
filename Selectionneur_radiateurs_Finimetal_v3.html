@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light dark">
 <!-- Icone d'onglet : SVG en data URI, donc aucune requête externe et fonctionne en file://. -->
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%237da32f'/%3E%3Cg transform='translate(4 4)' fill='none' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M11 8c2-3-2-3 0-6'/%3E%3Cpath d='M15.5 8c2-3-2-3 0-6'/%3E%3Cpath d='M10 16v-4'/%3E%3Cpath d='M14 16v-4'/%3E%3Cpath d='M18 16v-4'/%3E%3Cpath d='M20 6a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h3'/%3E%3Cpath d='M5 20v2'/%3E%3Cpath d='M19 20v2'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%237da32f'/%3E%3Cg transform='translate(4 4)' fill='none' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M11 8c2-3-2-3 0-6'/%3E%3Cpath d='M15.5 8c2-3-2-3 0-6'/%3E%3Cpath d='M6 10h.01'/%3E%3Cpath d='M6 14h.01'/%3E%3Cpath d='M10 16v-4'/%3E%3Cpath d='M14 16v-4'/%3E%3Cpath d='M18 16v-4'/%3E%3Cpath d='M20 6a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h3'/%3E%3Cpath d='M5 20v2'/%3E%3Cpath d='M19 20v2'/%3E%3C/g%3E%3C/svg%3E">
 <title>Sélectionneur de radiateurs Finimetal</title>
 <style>
 /* Sélectionneur de radiateurs : feuille de style.
@@ -43,6 +43,7 @@
   --rayon:6px;
   --rayon-s:6px;
   --ombre:0 1px 2px rgba(35,31,32,.06), 0 4px 16px rgba(35,31,32,.06);
+  --ombre-haute:0 8px 32px rgba(35,31,32,.22);
   --vitesse:.12s;
   --courbe:cubic-bezier(.2,.7,.2,1);
 }
@@ -71,6 +72,7 @@
   --ok:#a5cc52;
   --sur-primaire:#0f141b;
   --ombre:0 1px 2px rgba(0,0,0,.3), 0 4px 16px rgba(0,0,0,.25);
+  --ombre-haute:0 8px 32px rgba(0,0,0,.6);
 }
 @media (prefers-reduced-motion: reduce){ :root{ --vitesse:0s } *{ animation:none !important; transition:none !important } }
 
@@ -103,12 +105,12 @@ header .badge{
   display:inline-flex;align-items:center;gap:6px;background:var(--papier-3);color:var(--primaire-encre);
   border-radius:20px;padding:4px 12px;font-size:12px;font-weight:600;
 }
-.bouton-theme{
+.bouton-icone{
   background:transparent;border:1px solid var(--ligne);color:var(--encre-2);border-radius:var(--rayon-s);
   width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;
   transition:background-color var(--vitesse),transform var(--vitesse);flex:none;
 }
-.bouton-theme:hover{background:var(--papier-3);transform:rotate(15deg)}
+.bouton-icone:hover{background:var(--papier-3);transform:rotate(15deg)}
 
 .wrap{padding:18px 22px 60px;max-width:1500px;margin:0 auto}
 
@@ -281,6 +283,29 @@ code{background:var(--basse-fond);padding:1px 5px;border-radius:3px;font-size:12
 .miniinp{width:74px;padding:4px 6px;font-size:12px}
 .note{font-size:12px;color:var(--discret);margin-top:10px;line-height:1.6}
 
+/* ---- panneau "A propos" */
+.modale{
+  border:none;padding:0;border-radius:var(--rayon);background:var(--papier);color:var(--encre);
+  box-shadow:var(--ombre-haute);width:min(560px,94vw);max-height:86vh;overflow:hidden;
+}
+.modale::backdrop{background:rgba(0,0,0,.45)}
+.modale-tete{
+  display:flex;align-items:center;gap:10px;padding:13px 18px;
+  border-bottom:1px solid var(--ligne);background:var(--papier-2);
+}
+.modale-tete h2{margin:0;font-size:15px;font-weight:700;color:var(--encre);display:flex;align-items:center;gap:9px}
+.modale-tete .espace{flex:1}
+.modale-corps{padding:16px 18px;overflow:auto;max-height:calc(86vh - 56px);font-size:13px}
+.stats-groupe{margin:0 0 18px}
+.stats-groupe:last-child{margin-bottom:0}
+.stats-groupe h3{
+  margin:0 0 8px;font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;
+  color:var(--discret);display:flex;align-items:center;gap:6px;
+}
+.stats-liste{display:grid;grid-template-columns:auto minmax(0,1fr);gap:6px 16px;margin:0}
+.stats-liste dt{color:var(--encre-2)}
+.stats-liste dd{margin:0;font-weight:600;text-align:right;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+
 /* ---- impression : le dossier de dimensionnement uniquement, et toujours sur fond clair
    meme si l'ecran est en theme sombre. */
 @media print{
@@ -298,7 +323,8 @@ code{background:var(--basse-fond);padding:1px 5px;border-radius:3px;font-size:12
   .panel[data-view="dim"]{display:block !important}
   .noprint{display:none !important}
   header{position:static;border-bottom:1px solid var(--ligne)}
-  .bouton-theme{display:none !important}
+  .bouton-icone{display:none !important}
+  .modale{display:none !important}
   .panel{break-inside:avoid;box-shadow:none;border:1px solid var(--ligne)}
   .tablewrap{max-height:none;overflow:visible}
   th{position:static}
@@ -310,14 +336,15 @@ code{background:var(--basse-fond);padding:1px 5px;border-radius:3px;font-size:12
 </head>
 <body>
 <header>
-  <span class="logo"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 8c2-3-2-3 0-6"/><path d="M15.5 8c2-3-2-3 0-6"/><path d="M10 16v-4"/><path d="M14 16v-4"/><path d="M18 16v-4"/><path d="M20 6a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h3"/><path d="M5 20v2"/><path d="M19 20v2"/></svg></span>
+  <span class="logo"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 8c2-3-2-3 0-6"/><path d="M15.5 8c2-3-2-3 0-6"/><path d="M6 10h.01"/><path d="M6 14h.01"/><path d="M10 16v-4"/><path d="M14 16v-4"/><path d="M18 16v-4"/><path d="M20 6a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h3"/><path d="M5 20v2"/><path d="M19 20v2"/></svg></span>
   <div class="titre">
     <h1>Sélectionneur de radiateurs Finimetal (panneaux)</h1>
     <span class="sub" id="hdrSub">Dimensionnement sur régime unique à partir des déperditions Pléiades</span>
   </div>
   <span class="espace"></span>
   <div class="badge"><svg class="ico" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 20H2"/><path d="M11 4.562v16.157a1 1 0 0 0 1.242.97L19 20V5.562a2 2 0 0 0-1.515-1.94l-4-1A2 2 0 0 0 11 4.561z"/><path d="M11 4H8a2 2 0 0 0-2 2v14"/><path d="M14 12h.01"/><path d="M22 20h-3"/></svg><span id="hdrBadge"></span></div>
-  <button type="button" class="bouton-theme noprint" id="btnTheme" aria-label="Changer de thème"></button>
+  <button type="button" class="bouton-icone noprint" id="btnTheme" aria-label="Changer de thème"></button>
+  <button type="button" class="bouton-icone noprint" id="btnStats" data-ico="engrenage" aria-label="À propos et statistiques" title="À propos de l'outil"></button>
 </header>
 
 <div class="wrap">
@@ -616,7 +643,30 @@ Glissez-déposez ici un ou plusieurs fichiers <b>.slk</b> (déperditions Pléiad
   <p class="note">Outil d'aide au prédimensionnement. Les références définitives sont à valider sur le configurateur Finimetal en vigueur.</p>
 </div>
 
+<dialog id="dlgStats" class="modale noprint">
+  <div class="modale-tete">
+    <h2 data-ico="engrenage">À propos de l'outil</h2>
+    <span class="espace"></span>
+    <button type="button" class="bouton-icone" id="btnStatsFermer" data-ico="fermer" aria-label="Fermer"></button>
+  </div>
+  <div class="modale-corps" id="statsCorps"></div>
+</dialog>
+
 <script>
+/* ============================ IDENTITE DE L'OUTIL ============================ */
+// Renseigne a la main : build.py doit rester deterministe pour que --verifier ait un
+// sens, il ne peut donc pas horodater la construction. A mettre a jour en meme temps
+// que le champ maj de FICHE.md.
+const APP = {
+  nom: 'Sélectionneur de radiateurs Finimetal',
+  version: '3',
+  maj: '2026-08-28',
+  formatProjet: 6,
+  catalogueSource: 'Calculateur officiel Finimetal, marché France',
+  catalogueTarif: '04/2021',
+  icones: 'Lucide 1.35.0, licence ISC',
+  methode: 'EN 442, puissances à DT50',
+};
 /* ============================ CATALOGUE FINIMETAL (tarif 04/2021) ============================ */
 const TYPE_ORDER = ["11","21","22","33"];
 // Liens fiches produit finimetal.com (par nom de modele) - extraits du sitemap officiel /fr-fr/sitemap/products.xml
@@ -665,10 +715,10 @@ const TRACES_ICONES = {
   dossier: '<path d="m6 14 1.5-2.9A2 2 0 0 1 9.24 10H20a2 2 0 0 1 1.94 2.5l-1.54 6a2 2 0 0 1-1.95 1.5H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H18a2 2 0 0 1 2 2v2"/>',
   coche_cercle: '<circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>',
   liste: '<path d="M3 12h.01"/><path d="M3 18h.01"/><path d="M3 6h.01"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M8 6h13"/>',
+  engrenage: '<path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915"/><circle cx="12" cy="12" r="3"/>',
   reglages: '<line x1="21" x2="14" y1="4" y2="4"/><line x1="10" x2="3" y1="4" y2="4"/><line x1="21" x2="12" y1="12" y2="12"/><line x1="8" x2="3" y1="12" y2="12"/><line x1="21" x2="16" y1="20" y2="20"/><line x1="12" x2="3" y1="20" y2="20"/><line x1="14" x2="14" y1="2" y2="6"/><line x1="8" x2="8" y1="10" y2="14"/><line x1="16" x2="16" y1="18" y2="22"/>',
-  radiateur_panneau: '<path d="M11 8c2-3-2-3 0-6"/><path d="M15.5 8c2-3-2-3 0-6"/><path d="M6 10h.01"/><path d="M6 14h.01"/><path d="M10 16v-4"/><path d="M14 16v-4"/><path d="M18 16v-4"/><path d="M20 6a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h3"/><path d="M5 20v2"/><path d="M19 20v2"/>',
-  radiateur: '<path d="M14 4v10.54a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0Z"/>',
-  seche_serviette: '<path d="M10 4 8 6"/><path d="M17 19v2"/><path d="M2 12h20"/><path d="M7 19v2"/><path d="M9 5 7.621 3.621A2.121 2.121 0 0 0 4 5v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5"/>',
+  radiateur: '<path d="M11 8c2-3-2-3 0-6"/><path d="M15.5 8c2-3-2-3 0-6"/><path d="M6 10h.01"/><path d="M6 14h.01"/><path d="M10 16v-4"/><path d="M14 16v-4"/><path d="M18 16v-4"/><path d="M20 6a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h3"/><path d="M5 20v2"/><path d="M19 20v2"/>',
+  seche_serviette: '<path d="M22 7h-2"/><path d="M6.5 3h11A2.5 2.5 0 0 1 20 5.5V20a1 1 0 0 1-1 1h-9a1 1 0 0 1-1-1V5.5a1 1 0 0 0-5 0V17a1 1 0 0 0 1 1h4"/><path d="M9 7H2"/>',
   dimensionnement: '<path d="M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.41 2.41 0 0 1 0-3.4l2.6-2.6a2.41 2.41 0 0 1 3.4 0Z"/><path d="m14.5 12.5 2-2"/><path d="m11.5 9.5 2-2"/><path d="m8.5 6.5 2-2"/><path d="m17.5 15.5 2-2"/>',
   base_donnees: '<ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19A9 3 0 0 0 21 19V5"/><path d="M3 12A9 3 0 0 0 21 12"/>',
   tableau: '<path d="M12 3v18"/><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M3 15h18"/>',
@@ -1357,7 +1407,7 @@ function restore(){
 }
 
 /* ============================ PROJET JSON (1 projet = 1 fichier) ============================ */
-function projectData(){ return {app:'finimetal-selecteur-radiateurs',version:6,
+function projectData(){ return {app:'finimetal-selecteur-radiateurs',version:APP.formatProjet,
   name:PROJECT_NAME, rooms:ROOMS, overrides, settings:settingsToStore()}; }
 function loadProjectData(d){
   if(!d || !Array.isArray(d.rooms)) throw new Error("fichier projet invalide (pas de pièces).");
@@ -1567,6 +1617,106 @@ function initTheme(){
 
 poserIcones();
 initTheme();
+/* ============================ PANNEAU "A PROPOS" (engrenage) ============================ */
+// Ce que contient l'outil : version, date, et le poids reel du catalogue fabricant
+// embarque. Les compteurs sont calcules a l'ouverture, jamais recopies a la main,
+// pour qu'ils ne puissent pas mentir apres une mise a jour du catalogue.
+
+const LIB_GROUPES = {
+  rad_eau: 'Radiateurs eau chaude',
+  rad_elec: 'Radiateurs électriques',
+  ss_eau: 'Sèche-serviettes eau',
+  ss_elec: 'Sèche-serviettes électriques',
+  ss_mixte: 'Sèche-serviettes mixtes',
+};
+
+function statsCatalogue(){
+  const parGroupe = {};
+  let produits = 0, references = 0;
+  CATALOG_GROUPS.forEach(g => {
+    const liste = CATALOG[g] || [];
+    let n = 0;
+    liste.forEach(p => (p.groups || []).forEach(t => n += (t.items || []).length));
+    parGroupe[g] = { produits: liste.length, references: n };
+    produits += liste.length; references += n;
+  });
+  return { produits, references, parGroupe };
+}
+
+function statsProjet(){
+  if(!ROOMS.length) return null;
+  const S = readSettings();
+  let requis = 0;
+  ROOMS.forEach(r => requis += reqOf(S, r));
+  const batiments = new Set(ROOMS.map(r => r.bat || '(sans bâtiment)'));
+  return { pieces: ROOMS.length, batiments: batiments.size, requis, manuels: Object.keys(overrides).length };
+}
+
+function ligne(cle, valeur){ return `<dt>${esc(String(cle))}</dt><dd>${esc(String(valeur))}</dd>`; }
+function groupeStats(titre, icone, lignes){
+  return `<section class="stats-groupe"><h3>${ico(icone, 13)}${esc(titre)}</h3>`
+       + `<dl class="stats-liste">${lignes.join('')}</dl></section>`;
+}
+
+function renderStats(){
+  const cat = statsCatalogue();
+  const proj = statsProjet();
+  // Poids du catalogue : ce que pese reellement la donnee fabricant dans le fichier.
+  const octets = new Blob([JSON.stringify(CATALOG)]).size;
+  const ko = Math.round(octets / 1024);
+
+  const blocs = [
+    groupeStats('Application', 'info', [
+      ligne('Version', APP.version),
+      ligne('Dernière mise à jour', APP.maj),
+      ligne('Format de fichier projet', 'version ' + APP.formatProjet),
+      ligne('Méthode de calcul', APP.methode),
+    ]),
+    groupeStats('Catalogue fabricant', 'base_donnees', [
+      ligne('Source', APP.catalogueSource),
+      ligne('Tarif', APP.catalogueTarif),
+      ligne('Produits', cat.produits),
+      ligne('Références', nf.format(cat.references)),
+      ligne('Modèles à puissance linéaire', Object.keys(MODELS).length),
+      ligne('Poids embarqué', nf.format(ko) + ' Ko'),
+    ]),
+    groupeStats('Répartition du catalogue', 'types',
+      CATALOG_GROUPS.map(g => ligne(
+        LIB_GROUPES[g] || g,
+        `${cat.parGroupe[g].produits} produits, ${nf.format(cat.parGroupe[g].references)} réf.`
+      ))),
+  ];
+
+  blocs.push(proj
+    ? groupeStats('Projet en cours', 'dossier', [
+        ligne('Nom', PROJECT_NAME || '(sans nom)'),
+        ligne('Pièces', proj.pieces),
+        ligne('Bâtiments', proj.batiments),
+        ligne('Puissance requise', nf1.format(proj.requis / 1000) + ' kW'),
+        ligne('Pièces en choix manuel', proj.manuels),
+      ])
+    : groupeStats('Projet en cours', 'dossier', [ligne('État', 'aucun projet chargé')]));
+
+  blocs.push(groupeStats('Technique', 'reglages', [
+    ligne('Icônes', APP.icones),
+    ligne('Thème', document.documentElement.dataset.theme === 'dark' ? 'sombre' : 'clair'),
+    ligne('Fichier', 'HTML autonome, aucune requête externe'),
+  ]));
+
+  $('statsCorps').innerHTML = blocs.join('');
+}
+
+function ouvrirStats(){ renderStats(); $('dlgStats').showModal(); }
+
+function initStats(){
+  const dlg = $('dlgStats');
+  $('btnStats').addEventListener('click', ouvrirStats);
+  $('btnStatsFermer').addEventListener('click', () => dlg.close());
+  // Clic en dehors du panneau : la zone hors contenu appartient au <dialog> lui-meme.
+  dlg.addEventListener('click', ev => { if(ev.target === dlg) dlg.close(); });
+}
+
+initStats();
 </script>
 </body>
 </html>
