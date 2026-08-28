@@ -37,6 +37,7 @@
   --note-fond:#fbf1df;
   --note-bord:#d08a1e;
   --ok:#7da32f;
+  --sur-primaire:#ffffff;
   --rayon:6px;
   --rayon-s:6px;
   --ombre:0 1px 2px rgba(35,31,32,.06), 0 4px 16px rgba(35,31,32,.06);
@@ -66,6 +67,7 @@
   --note-fond:#33290f;
   --note-bord:#b07a24;
   --ok:#a5cc52;
+  --sur-primaire:#0f141b;
   --ombre:0 1px 2px rgba(0,0,0,.3), 0 4px 16px rgba(0,0,0,.25);
 }
 @media (prefers-reduced-motion: reduce){ :root{ --vitesse:0s } *{ animation:none !important; transition:none !important } }
@@ -88,10 +90,9 @@ header{
   position:sticky;top:0;z-index:6;
 }
 header .logo{
-  width:30px;height:30px;border-radius:var(--rayon-s);background:var(--primaire);color:#fff;
+  width:30px;height:30px;border-radius:var(--rayon-s);background:var(--primaire);color:var(--sur-primaire);
   display:inline-flex;align-items:center;justify-content:center;flex:none;
 }
-[data-theme="dark"] header .logo{color:#0f141b}
 header .titre{display:flex;flex-direction:column;gap:1px;min-width:0}
 header h1{margin:0;font-size:18px;font-weight:800;letter-spacing:-.3px;color:var(--encre);line-height:1.2}
 header .sub{font-size:12.5px;color:var(--discret);font-weight:400}
@@ -120,9 +121,8 @@ header .badge{
 .tabs button.active{background:var(--primaire-fond);color:var(--primaire-encre)}
 .tabcount{
   display:inline-block;min-width:18px;padding:0 6px;border-radius:9px;background:var(--primaire);
-  color:#fff;font-size:11px;font-weight:700;line-height:18px;text-align:center;
+  color:var(--sur-primaire);font-size:11px;font-weight:700;line-height:18px;text-align:center;
 }
-[data-theme="dark"] .tabcount{color:#0f141b}
 
 /* ---- panneaux */
 .panel{background:var(--papier);border-radius:var(--rayon);box-shadow:var(--ombre);margin-bottom:18px;overflow:hidden}
@@ -152,6 +152,21 @@ input[type=number],input[type=text],select{
 }
 input[type=number]:focus,input[type=text]:focus,select:focus{outline:none;border-color:var(--primaire);background-color:var(--papier)}
 
+/* Champ fichier : le bouton natif ignore le theme, on le redessine comme un bouton secondaire. */
+input[type=file]{
+  font:inherit;font-size:12.5px;width:100%;padding:5px;color:var(--encre-2);
+  border:1px solid var(--ligne);border-radius:var(--rayon-s);background-color:var(--papier-2);
+  transition:border-color var(--vitesse),background-color var(--vitesse);
+}
+input[type=file]:focus{outline:none;border-color:var(--primaire);background-color:var(--papier)}
+input[type=file]::file-selector-button{
+  font:inherit;font-size:12.5px;font-weight:600;margin:0 10px 0 0;padding:5px 11px;
+  border:1px solid var(--ligne);border-radius:var(--rayon-s);
+  background:var(--papier);color:var(--primaire-encre);cursor:pointer;
+  transition:background-color var(--vitesse),border-color var(--vitesse);
+}
+input[type=file]::file-selector-button:hover{background:var(--primaire-fond);border-color:var(--primaire)}
+
 .chips{display:flex;gap:8px;flex-wrap:wrap}
 .chip{
   display:inline-flex;gap:6px;align-items:center;border:1px solid var(--ligne);border-radius:20px;
@@ -160,15 +175,26 @@ input[type=number]:focus,input[type=text]:focus,select:focus{outline:none;border
 }
 .chip:hover{background:var(--papier-2)}
 .chip:has(input:checked){border-color:var(--primaire);background:var(--primaire-fond);color:var(--primaire-encre);font-weight:600}
-.chip input{margin:0;accent-color:var(--primaire)}
+.chip input[type=checkbox]{
+  appearance:none;-webkit-appearance:none;margin:0;flex:none;
+  width:15px;height:15px;border:1.5px solid var(--ligne);border-radius:4px;
+  background-color:var(--papier);background-repeat:no-repeat;background-position:center;
+  background-size:11px 11px;cursor:pointer;
+  transition:background-color var(--vitesse),border-color var(--vitesse);
+}
+.chip input[type=checkbox]:hover{border-color:var(--primaire)}
+.chip input[type=checkbox]:checked{
+  background-color:var(--primaire);border-color:var(--primaire);
+  background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E");
+}
+[data-theme="dark"] .chip input[type=checkbox]:checked{background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230f141b' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E")}
 
 /* ---- boutons */
 .btn{
-  display:inline-flex;align-items:center;gap:6px;background:var(--primaire);color:#fff;border:1px solid var(--primaire);
+  display:inline-flex;align-items:center;gap:6px;background:var(--primaire);color:var(--sur-primaire);border:1px solid var(--primaire);
   border-radius:var(--rayon-s);padding:8px 14px;font:inherit;font-size:13px;cursor:pointer;font-weight:600;
   transition:filter var(--vitesse),background-color var(--vitesse),transform var(--vitesse);
 }
-[data-theme="dark"] .btn{color:#0f141b}
 .btn:hover{filter:brightness(1.06)}
 .btn:active{transform:scale(.97)}
 .btn.sec{background:var(--papier);color:var(--primaire-encre);border-color:var(--ligne)}
@@ -217,12 +243,11 @@ th.sort-desc::after{border-top:5px solid currentColor}
 /* ---- etiquettes d'emetteur : bleu pour le radiateur, ambre pour le seche-serviette */
 .emlab{
   display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:11px;font-size:11px;
-  font-weight:700;color:#fff;letter-spacing:.3px;
+  font-weight:700;color:var(--sur-primaire);letter-spacing:.3px;
   -webkit-print-color-adjust:exact;print-color-adjust:exact;
 }
 .em-rad{background:var(--primaire)}
 .em-ss{background:var(--moyenne)}
-[data-theme="dark"] .emlab{color:#0f141b}
 
 /* ---- avertissements */
 .regwarn{
@@ -233,11 +258,10 @@ th.sort-desc::after{border-top:5px solid currentColor}
 /* ---- sections de parametres */
 .paramsec{margin:0 0 20px;padding:14px 16px;border:1px solid var(--ligne);border-radius:var(--rayon);background:var(--papier)}
 .paramhead{
-  display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:#fff;
+  display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--sur-primaire);
   background:var(--primaire);border-radius:var(--rayon-s);padding:5px 12px;margin-bottom:12px;letter-spacing:.3px;
 }
 .paramsec.ss .paramhead{background:var(--moyenne)}
-[data-theme="dark"] .paramhead{color:#0f141b}
 
 .prodlink{display:inline-flex;align-items:center;gap:5px;margin-top:6px;font-size:12px;color:var(--lien);font-weight:600}
 .prodlink:hover{text-decoration:underline}
@@ -265,7 +289,7 @@ code{background:var(--basse-fond);padding:1px 5px;border-radius:3px;font-size:12
     --ligne:#c9cbcd;--ligne-2:#dcdee0;
     --primaire:#7da32f;--primaire-fond:#eef5dc;--primaire-encre:#43590f;
     --haute:#a8332c;--moyenne:#a06a12;--ok:#4d6b1c;
-    --basse-fond:#f0f0ee;--note-fond:#fbf1df;--note-bord:#d08a1e;--ombre:none;
+    --basse-fond:#f0f0ee;--note-fond:#fbf1df;--note-bord:#d08a1e;--sur-primaire:#ffffff;--ombre:none;
   }
   .tabs{display:none !important}
   .panel[data-view]{display:none !important}

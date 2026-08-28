@@ -20,6 +20,9 @@
 - Pas de lien Google Fonts pour Inter, contrairement à planif : la pile de polices commence par Inter mais l'outil doit rester utilisable hors ligne et en file://, sans aucune requête externe. Sur Windows, Segoe UI prend le relais.
 - Impression : le bloc @media print réinjecte la palette claire même quand l'écran est en thème sombre, sinon le dossier de dimensionnement sortirait sur fond noir.
 - Rendu contrôlé dans un navigateur, thèmes clair et sombre : aucune couleur bleue calculée sur la page, 41 icônes posées, aucune erreur console, aucune requête externe.
+- Deux champs échappaient encore au thème, signalés sur capture. Le champ fichier n'était couvert par aucune règle, mon sélecteur ne visait que number, text et select : ajout de input[type=file] et surtout de ::file-selector-button, redessiné comme un bouton secondaire. Les cases à cocher gardaient le rendu natif, dont l'aplat clair d'accent-color pesait lourd en thème sombre : passées en appearance:none avec une boîte de 15 px et la coche en image de fond, reprise du tracé Lucide "ok".
+- Un data URI ne peut pas lire une variable CSS, d'où une seule surcharge sombre pour la couleur de la coche. En contrepartie, la couleur du texte posé sur un aplat de primaire est devenue le jeton --sur-primaire, ce qui a supprimé cinq surcharges [data-theme="dark"] qui la redéfinissaient à l'identique sur le logo, le compteur d'onglet, les boutons, les pastilles d'émetteur et les bandeaux de section.
+- Vérifié dans les deux thèmes : couleurs calculées conformes, coche blanche en clair et sombre en sombre, clic réel sur une pastille qui bascule la case et déclenche le surlignage.
 
 ## 2026-08-18
 - Fiche créée à partir du modèle `outil` lors de la mise en place du catalogue. Projet existant depuis le 2026-07-07, dernière activité observée le 2026-07-09.
