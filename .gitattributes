@@ -1,0 +1,12 @@
+# Fins de ligne normalisees en LF partout.
+# core.autocrlf vaut true au niveau systeme sur ce poste : sans cette regle, un
+# clone frais reecrirait les sources en CRLF et build.py --verifier signalerait
+# un ecart permanent alors que rien n'a change.
+* text=auto eol=lf
+
+# Le catalogue fabricant est une longue ligne de donnees generee : un diff ligne
+# a ligne n'y apprend rien.
+src/donnees/catalogue-complet.js -diff
+
+# Le HTML de la racine est produit par build.py, pas edite a la main.
+Selectionneur_radiateurs_Finimetal_v3.html linguist-generated=true

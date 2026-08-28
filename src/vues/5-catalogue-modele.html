@@ -1,0 +1,29 @@
+  <!-- ===================== 4. CATALOGUE ===================== -->
+  <div class="panel" data-view="dim">
+    <h2 onclick="toggle(this,true)">4. Catalogue du modèle courant et méthode <span class="chev">&gt;</span></h2>
+    <div class="body" style="display:none">
+      <p class="note" style="margin-top:0">
+        Puissances à <b>DT50</b> (75/65/20 °C selon EN 442), en <b>W/m</b> (watts par mètre), et exposant <b>n</b> (Pente)
+        par type et hauteur, issues du <b>calculateur officiel Finimetal</b> (données constructeur, non modifiables).
+        Pour consulter tous les modèles, voir l'onglet <b>Base de données fabricant</b>.
+      </p>
+      <div class="tablewrap" style="max-height:none">
+        <table id="catTbl" class="kt"></table>
+      </div>
+      <details class="meth" style="margin-top:16px">
+        <summary>Méthode de calcul (à lire)</summary>
+        <p><b>Puissance requise</b> par pièce = colonne "Total" des déperditions Pléiades (base + relance), ou vos valeurs saisies.</p>
+        <p><b>Écart de température</b> pour la consigne réelle de chaque pièce, en moyenne arithmétique
+        (convention Finimetal) : <code>DT = (Te + Ts)/2 - Ti</code>.</p>
+        <p><b>Facteur de correction</b> vs catalogue DT50 : <code>f = (DT / 50) ^ n</code> (n = Pente, selon type et hauteur).
+        Cette méthode reproduit le calculateur officiel Finimetal (vérifié au watt sur le régime, écart maxi 0,5 W).</p>
+        <p><b>Puissance émise</b> = W/m x longueur(m) x f. La sélection auto retient la plus petite longueur réellement
+        disponible (variable selon le type et la hauteur) couvrant la puissance requise majorée de la tolérance mini,
+        en privilégiant le type le plus fin.</p>
+        <p style="color:var(--muted)">Données extraites du calculateur officiel Finimetal (marché France). Chaque
+        modèle a ses propres puissances : contrairement à une idée reçue, Compact, Standard et Intégré ne sont pas
+        identiques (Standard et Intégré émettent un peu plus). Deco reprend le corps du Plan.</p>
+      </details>
+    </div>
+  </div>
+

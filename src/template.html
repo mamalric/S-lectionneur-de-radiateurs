@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sélectionneur de radiateurs Finimetal</title>
+<style>
+<!--@include: style.css -->
+</style>
+</head>
+<body>
+<header>
+  <h1>Sélectionneur de radiateurs Finimetal (panneaux)</h1>
+  <div class="sub" id="hdrSub">Dimensionnement sur régime unique à partir des déperditions Pléiades</div>
+  <div class="badge" id="hdrBadge"></div>
+</header>
+
+<div class="wrap">
+
+  <div class="tabs noprint">
+    <button data-view="projet" onclick="showView('projet')">Projet &amp; import</button>
+    <button data-view="pieces" onclick="showView('pieces')">Gestion des pièces <span class="tabcount" id="tabCountPieces"></span></button>
+    <button data-view="dim" onclick="showView('dim')">Dimensionnement</button>
+    <button data-view="db" onclick="showView('db')">Base de données fabricant</button>
+  </div>
+
+<!--@include: vues/0-projet-import.html -->
+<!--@include: vues/1-gestion-pieces.html -->
+<!--@include: vues/2-parametres.html -->
+<!--@include: vues/3-synthese.html -->
+<!--@include: vues/4-tableau-pieces.html -->
+<!--@include: vues/5-catalogue-modele.html -->
+<!--@include: vues/6-base-donnees-fabricant.html -->
+  <p class="note">Outil d'aide au prédimensionnement. Les références définitives sont à valider sur le configurateur Finimetal en vigueur.</p>
+</div>
+
+<script>
+<!--@include: donnees/modeles.js -->
+<!--@include: donnees/catalogue-complet.js -->
+<!--@include: donnees/acces-modeles.js -->
+<!--@include: modules/01-etat-global.js -->
+<!--@include: modules/02-lecture-parametres.js -->
+<!--@include: modules/03-physique.js -->
+<!--@include: modules/04-catalogue-unifie.js -->
+<!--@include: modules/05-rendu.js -->
+<!--@include: modules/06-catalogue-ui.js -->
+<!--@include: modules/07-base-donnees-fabricant.js -->
+<!--@include: modules/08-interactions.js -->
+<!--@include: modules/09-selects-dynamiques.js -->
+<!--@include: modules/10-export-csv.js -->
+<!--@include: modules/11-persistance-locale.js -->
+<!--@include: modules/12-projet-json.js -->
+<!--@include: modules/13-info-entete.js -->
+<!--@include: modules/14-import-slk.js -->
+<!--@include: modules/15-init.js -->
+</script>
+</body>
+</html>
