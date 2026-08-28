@@ -1,6 +1,6 @@
   <!-- ===================== 3. TABLEAU PIECES ===================== -->
   <div class="panel" data-view="dim">
-    <h2 onclick="toggle(this)">3. Sélection pièce par pièce <span class="chev">v</span></h2>
+    <h2 onclick="toggle(this)" data-ico="tableau">3. Sélection pièce par pièce <span class="chev" data-ico="chevron_bas" data-ico-taille="15"></span></h2>
     <div class="body">
       <div class="note noprint" style="margin-top:0">
         Ti et P requise proviennent de Pléiades (non modifiables). Colonnes ajustables :
@@ -8,7 +8,7 @@
         Bouton <b>Auto</b> = revenir à la sélection automatique. Astérisque <b>*</b> = pièce en choix manuel.
         Couverture verte = dans la tolérance, rouge = insuffisant, orange = au-delà de la tolérance maxi.
       </div>
-      <div id="regimeWarn" class="regwarn" style="display:none">
+      <div id="regimeWarn" class="regwarn" style="display:none" data-ico="attention" data-ico-taille="17">
         Régime non saisi : renseignez la <b>température aller / retour</b> (bloc Paramètres) pour dimensionner les émetteurs à eau. Export et impression désactivés.
       </div>
       <div class="tablewrap">

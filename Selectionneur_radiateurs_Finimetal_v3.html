@@ -4,121 +4,308 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
 <title>Sélectionneur de radiateurs Finimetal</title>
 <style>
-  :root{
-    --bleu:#123a5e; --bleu2:#1f5f92; --accent:#e2761b; --ok:#1a8a3a; --ko:#c0392b;
-    --gris:#eef2f6; --gris2:#dce4ec; --txt:#1c2b3a; --muted:#5d6b7a; --bord:#c9d4de;
+/* Sélectionneur de radiateurs : feuille de style.
+   Thème repris de l'outil planif (2026-08-19_Gestion de plannification Zoho) : même palette
+   papier/encre, même primaire olive, mêmes rayons et ombres, clair par défaut et sombre via
+   [data-theme="dark"] ou le réglage système.
+   Police : la pile commence par Inter mais sans lien Google Fonts, pour que l'outil garde
+   zéro requête externe et reste utilisable hors ligne en file://. Sur Windows, Segoe UI prend
+   le relais. */
+:root{
+  color-scheme: light;
+  --fond:#f5f5f3;
+  --papier:#ffffff;
+  --papier-2:#f6f9ec;
+  --papier-3:#eef5dc;
+  --encre:#231f20;
+  --encre-2:#58595b;
+  --discret:#8a8c8f;
+  --ligne:#e4e5e7;
+  --ligne-2:#efeff0;
+  --primaire:#7da32f;
+  --primaire-fond:#eef5dc;
+  --primaire-encre:#55701f;
+  --lien:#55701f;
+  --haute:#c4423b;
+  --haute-fond:#fbe9e7;
+  --moyenne:#d08a1e;
+  --moyenne-fond:#fbf1df;
+  --basse-fond:#f0f0ee;
+  --note-fond:#fbf1df;
+  --note-bord:#d08a1e;
+  --ok:#7da32f;
+  --rayon:6px;
+  --rayon-s:6px;
+  --ombre:0 1px 2px rgba(35,31,32,.06), 0 4px 16px rgba(35,31,32,.06);
+  --vitesse:.12s;
+  --courbe:cubic-bezier(.2,.7,.2,1);
+}
+[data-theme="dark"]{
+  color-scheme: dark;
+  --fond:#131412;
+  --papier:#1b1c19;
+  --papier-2:#21251b;
+  --papier-3:#2a2f20;
+  --encre:#edece9;
+  --encre-2:#b5b4b0;
+  --discret:#8b8d90;
+  --ligne:#2e2f2c;
+  --ligne-2:#252624;
+  --primaire:#a5cc52;
+  --primaire-fond:#2b3319;
+  --primaire-encre:#c6e18b;
+  --lien:#b5d178;
+  --haute:#e0736c;
+  --haute-fond:#3a2220;
+  --moyenne:#e0a558;
+  --moyenne-fond:#362a15;
+  --basse-fond:#26272a;
+  --note-fond:#33290f;
+  --note-bord:#b07a24;
+  --ok:#a5cc52;
+  --ombre:0 1px 2px rgba(0,0,0,.3), 0 4px 16px rgba(0,0,0,.25);
+}
+@media (prefers-reduced-motion: reduce){ :root{ --vitesse:0s } *{ animation:none !important; transition:none !important } }
+
+*{box-sizing:border-box}
+body{
+  font-family:Inter,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  margin:0;color:var(--encre);background:var(--fond);font-size:14px;line-height:1.5;
+  transition:background-color var(--vitesse),color var(--vitesse);
+}
+a{color:var(--lien);text-decoration:none}
+a:hover{text-decoration:underline}
+:focus-visible{outline:2px solid var(--primaire);outline-offset:2px;border-radius:4px}
+.ico{vertical-align:-3px;flex:none}
+
+/* ---- en-tete */
+header{
+  display:flex;align-items:center;gap:8px 16px;flex-wrap:wrap;
+  padding:11px 22px;background:var(--papier);border-bottom:1px solid var(--ligne);
+  position:sticky;top:0;z-index:6;
+}
+header .logo{
+  width:30px;height:30px;border-radius:var(--rayon-s);background:var(--primaire);color:#fff;
+  display:inline-flex;align-items:center;justify-content:center;flex:none;
+}
+[data-theme="dark"] header .logo{color:#0f141b}
+header .titre{display:flex;flex-direction:column;gap:1px;min-width:0}
+header h1{margin:0;font-size:18px;font-weight:800;letter-spacing:-.3px;color:var(--encre);line-height:1.2}
+header .sub{font-size:12.5px;color:var(--discret);font-weight:400}
+header .espace{flex:1}
+header .badge{
+  display:inline-flex;align-items:center;gap:6px;background:var(--papier-3);color:var(--primaire-encre);
+  border-radius:20px;padding:4px 12px;font-size:12px;font-weight:600;
+}
+.bouton-theme{
+  background:transparent;border:1px solid var(--ligne);color:var(--encre-2);border-radius:var(--rayon-s);
+  width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;
+  transition:background-color var(--vitesse),transform var(--vitesse);flex:none;
+}
+.bouton-theme:hover{background:var(--papier-3);transform:rotate(15deg)}
+
+.wrap{padding:18px 22px 60px;max-width:1500px;margin:0 auto}
+
+/* ---- onglets */
+.tabs{display:flex;gap:4px;margin:0 0 20px;flex-wrap:wrap}
+.tabs button{
+  display:inline-flex;align-items:center;gap:7px;background:transparent;border:1px solid transparent;
+  padding:8px 14px;font:inherit;font-size:13.5px;font-weight:600;color:var(--encre-2);
+  cursor:pointer;border-radius:var(--rayon);transition:background-color var(--vitesse),color var(--vitesse);
+}
+.tabs button:hover{background:var(--papier-3);color:var(--encre)}
+.tabs button.active{background:var(--primaire-fond);color:var(--primaire-encre)}
+.tabcount{
+  display:inline-block;min-width:18px;padding:0 6px;border-radius:9px;background:var(--primaire);
+  color:#fff;font-size:11px;font-weight:700;line-height:18px;text-align:center;
+}
+[data-theme="dark"] .tabcount{color:#0f141b}
+
+/* ---- panneaux */
+.panel{background:var(--papier);border-radius:var(--rayon);box-shadow:var(--ombre);margin-bottom:18px;overflow:hidden}
+[data-theme="dark"] .panel{border:1px solid var(--ligne)}
+.panel h2{
+  margin:0;padding:12px 16px;font-size:15px;font-weight:700;color:var(--encre);
+  background:var(--papier-2);border-bottom:1px solid var(--ligne);
+  display:flex;align-items:center;gap:9px;cursor:pointer;user-select:none;
+  transition:background-color var(--vitesse);
+}
+.panel h2:hover{background:var(--papier-3)}
+.panel h2 .chev{margin-left:auto;color:var(--discret);display:inline-flex;transition:transform var(--vitesse)}
+.panel .body{padding:16px}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
+.fld{display:flex;flex-direction:column;gap:5px}
+.fld label{font-size:12px;font-weight:600;color:var(--encre-2);line-height:1.35;min-height:2.6em;display:flex;align-items:flex-start}
+.fld .hint{font-size:11px;color:var(--discret);font-weight:400}
+.pair{display:flex;gap:8px}
+.pair>div{flex:1;display:flex;flex-direction:column;gap:5px}
+.pair .sep{align-self:flex-end;padding-bottom:8px;color:var(--discret);font-weight:600;flex:0}
+
+input[type=number],input[type=text],select{
+  font:inherit;padding:7px 10px;border:1px solid var(--ligne);border-radius:var(--rayon-s);
+  background-color:var(--papier-2);color:var(--encre);width:100%;
+  transition:border-color var(--vitesse),background-color var(--vitesse);
+}
+input[type=number]:focus,input[type=text]:focus,select:focus{outline:none;border-color:var(--primaire);background-color:var(--papier)}
+
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{
+  display:inline-flex;gap:6px;align-items:center;border:1px solid var(--ligne);border-radius:20px;
+  padding:5px 12px;font-size:13px;cursor:pointer;background:var(--papier);color:var(--encre-2);
+  transition:background-color var(--vitesse),border-color var(--vitesse),color var(--vitesse);
+}
+.chip:hover{background:var(--papier-2)}
+.chip:has(input:checked){border-color:var(--primaire);background:var(--primaire-fond);color:var(--primaire-encre);font-weight:600}
+.chip input{margin:0;accent-color:var(--primaire)}
+
+/* ---- boutons */
+.btn{
+  display:inline-flex;align-items:center;gap:6px;background:var(--primaire);color:#fff;border:1px solid var(--primaire);
+  border-radius:var(--rayon-s);padding:8px 14px;font:inherit;font-size:13px;cursor:pointer;font-weight:600;
+  transition:filter var(--vitesse),background-color var(--vitesse),transform var(--vitesse);
+}
+[data-theme="dark"] .btn{color:#0f141b}
+.btn:hover{filter:brightness(1.06)}
+.btn:active{transform:scale(.97)}
+.btn.sec{background:var(--papier);color:var(--primaire-encre);border-color:var(--ligne)}
+.btn.sec:hover{background:var(--primaire-fond);filter:none}
+.btn.mini{padding:4px 9px;font-size:12px}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:8px}
+
+/* ---- bandeau de resultats en direct */
+.live{
+  display:flex;gap:18px;flex-wrap:wrap;background:var(--note-fond);border:1px solid var(--note-bord);
+  border-radius:var(--rayon);padding:11px 14px;margin-top:12px;font-size:13px;color:var(--encre);
+}
+.live b{color:var(--moyenne)}
+
+/* ---- tableaux */
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{padding:7px 9px;text-align:center;white-space:nowrap;border-bottom:1px solid var(--ligne-2)}
+th{
+  background:var(--papier-2);color:var(--discret);font-weight:600;font-size:11.5px;
+  text-transform:uppercase;letter-spacing:.4px;position:sticky;top:0;z-index:2;
+  border-bottom:1px solid var(--ligne);
+}
+td.l{text-align:left}
+td.empty{padding:26px;color:var(--discret);font-style:italic}
+tr.apt td{background:var(--primaire-fond);font-weight:700;color:var(--primaire-encre);text-align:left}
+tbody tr{transition:background-color var(--vitesse)}
+tbody tr:hover td{background:var(--papier-2)}
+tr.sub td{background:var(--basse-fond);font-weight:600;font-style:italic;color:var(--discret)}
+.rad{background:var(--papier);font-weight:600}
+select.cell{padding:4px 6px;font-size:12px;max-width:110px}
+input.cell{width:64px;padding:4px 6px;font-size:12px;text-align:center}
+th.sortable{cursor:pointer;user-select:none;white-space:nowrap}
+th.sortable:hover{background:var(--papier-3);color:var(--encre-2)}
+th.sort-asc::after,th.sort-desc::after{content:'';display:inline-block;width:0;height:0;margin-left:6px;vertical-align:middle;border-left:4px solid transparent;border-right:4px solid transparent}
+th.sort-asc::after{border-bottom:5px solid currentColor}
+th.sort-desc::after{border-top:5px solid currentColor}
+.tablewrap{overflow-x:auto;max-height:70vh;overflow-y:auto;border:1px solid var(--ligne);border-radius:var(--rayon)}
+.kt th,.kt td{font-size:12px;padding:4px 7px}
+
+/* ---- etats de couverture */
+.cov-ok{color:var(--ok);font-weight:700}
+.cov-ko{color:var(--haute);font-weight:700}
+.cov-hi{color:var(--moyenne);font-weight:700}
+.manflag{color:var(--moyenne);font-weight:700}
+
+/* ---- etiquettes d'emetteur : bleu pour le radiateur, ambre pour le seche-serviette */
+.emlab{
+  display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:11px;font-size:11px;
+  font-weight:700;color:#fff;letter-spacing:.3px;
+  -webkit-print-color-adjust:exact;print-color-adjust:exact;
+}
+.em-rad{background:var(--primaire)}
+.em-ss{background:var(--moyenne)}
+[data-theme="dark"] .emlab{color:#0f141b}
+
+/* ---- avertissements */
+.regwarn{
+  display:flex;align-items:flex-start;gap:9px;background:var(--haute-fond);border:1px solid var(--haute);
+  color:var(--haute);border-radius:var(--rayon);padding:11px 14px;font-size:13px;font-weight:600;margin:10px 0;
+}
+
+/* ---- sections de parametres */
+.paramsec{margin:0 0 20px;padding:14px 16px;border:1px solid var(--ligne);border-radius:var(--rayon);background:var(--papier)}
+.paramhead{
+  display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:#fff;
+  background:var(--primaire);border-radius:var(--rayon-s);padding:5px 12px;margin-bottom:12px;letter-spacing:.3px;
+}
+.paramsec.ss .paramhead{background:var(--moyenne)}
+[data-theme="dark"] .paramhead{color:#0f141b}
+
+.prodlink{display:inline-flex;align-items:center;gap:5px;margin-top:6px;font-size:12px;color:var(--lien);font-weight:600}
+.prodlink:hover{text-decoration:underline}
+
+/* ---- synthese */
+.synth{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
+.card{background:var(--papier-2);border:1px solid var(--ligne);border-radius:var(--rayon);padding:12px 14px}
+.card .k{font-size:12px;color:var(--discret);display:flex;align-items:center;gap:5px}
+.card .v{font-size:22px;font-weight:700;color:var(--primaire-encre);margin-top:2px}
+.card .u{font-size:12px;color:var(--discret)}
+
+details.meth{font-size:13px;line-height:1.7}
+details.meth summary{cursor:pointer;font-weight:600;color:var(--lien)}
+code{background:var(--basse-fond);padding:1px 5px;border-radius:3px;font-size:12px;font-family:Consolas,"Courier New",monospace}
+.miniinp{width:74px;padding:4px 6px;font-size:12px}
+.note{font-size:12px;color:var(--discret);margin-top:10px;line-height:1.6}
+
+/* ---- impression : le dossier de dimensionnement uniquement, et toujours sur fond clair
+   meme si l'ecran est en theme sombre. */
+@media print{
+  :root,[data-theme="dark"]{
+    color-scheme:light;
+    --fond:#fff;--papier:#fff;--papier-2:#f6f9ec;--papier-3:#eef5dc;
+    --encre:#231f20;--encre-2:#58595b;--discret:#6b6d70;
+    --ligne:#c9cbcd;--ligne-2:#dcdee0;
+    --primaire:#7da32f;--primaire-fond:#eef5dc;--primaire-encre:#43590f;
+    --haute:#a8332c;--moyenne:#a06a12;--ok:#4d6b1c;
+    --basse-fond:#f0f0ee;--note-fond:#fbf1df;--note-bord:#d08a1e;--ombre:none;
   }
-  *{box-sizing:border-box}
-  body{font-family:"Segoe UI",Arial,Helvetica,sans-serif;margin:0;color:var(--txt);background:#f4f7fa;font-size:14px;line-height:1.4}
-  header{background:linear-gradient(100deg,var(--bleu),var(--bleu2));color:#fff;padding:16px 22px}
-  header h1{margin:0 0 3px;font-size:20px;font-weight:600}
-  header .sub{font-size:13px;opacity:.92}
-  header .badge{display:inline-block;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);
-    border-radius:4px;padding:2px 8px;margin-top:6px;font-size:12px}
-  .wrap{padding:18px 22px 60px;max-width:1500px;margin:0 auto}
-  .panel{background:#fff;border:1px solid var(--bord);border-radius:8px;margin-bottom:18px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
-  .panel h2{margin:0;padding:11px 16px;font-size:15px;background:var(--gris);border-bottom:1px solid var(--bord);
-    border-radius:8px 8px 0 0;display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none}
-  .panel h2 .chev{margin-left:auto;font-size:12px;color:var(--muted)}
-  .panel .body{padding:14px 16px}
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
-  .fld{display:flex;flex-direction:column;gap:4px}
-  .fld label{font-size:12px;font-weight:600;color:var(--muted);line-height:1.3;min-height:2.6em;display:flex;align-items:flex-start}
-  .fld .hint{font-size:11px;color:var(--muted);font-weight:400}
-  .pair{display:flex;gap:8px}
-  .pair>div{flex:1;display:flex;flex-direction:column;gap:4px}
-  .pair .sep{align-self:flex-end;padding-bottom:8px;color:var(--muted);font-weight:600;flex:0}
-  input[type=number],input[type=text],select{padding:6px 8px;border:1px solid var(--bord);border-radius:5px;font-size:14px;background:#fff;width:100%}
-  .chips{display:flex;gap:8px;flex-wrap:wrap}
-  .chip{display:flex;gap:5px;align-items:center;border:1px solid var(--bord);border-radius:20px;padding:5px 12px;font-size:13px;cursor:pointer;background:#fff}
-  .chip input{margin:0}
-  .btn{background:var(--bleu2);color:#fff;border:none;border-radius:5px;padding:8px 14px;font-size:13px;cursor:pointer;font-weight:600}
-  .btn:hover{background:var(--bleu)}
-  .btn.sec{background:#fff;color:var(--bleu2);border:1px solid var(--bleu2)}
-  .btn.sec:hover{background:var(--gris)}
-  .btn.mini{padding:3px 8px;font-size:11px;font-weight:600}
-  .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:6px}
-  .live{display:flex;gap:18px;flex-wrap:wrap;background:#fbf6ef;border:1px solid #f0d9bf;border-radius:6px;padding:10px 14px;margin-top:12px;font-size:13px}
-  .live b{color:var(--accent)}
-  table{border-collapse:collapse;width:100%;font-size:13px}
-  th,td{border:1px solid var(--bord);padding:5px 7px;text-align:center;white-space:nowrap}
-  th{background:var(--bleu);color:#fff;font-weight:600;position:sticky;top:0;z-index:2}
-  td.l{text-align:left}
-  td.empty{padding:26px;color:var(--muted);font-style:italic}
-  tr.apt td{background:#eaf1f7;font-weight:700;color:var(--bleu);text-align:left}
-  tbody tr:hover td{background:#f3f8ff}
-  tr.sub td{background:#f6f9fc;font-weight:600;font-style:italic;color:var(--muted)}
-  .rad{background:#fff;font-weight:600}
-  select.cell{padding:3px 4px;font-size:12px;max-width:110px}
-  input.cell{width:64px;padding:3px 4px;font-size:12px;text-align:center}
-  .cov-ok{color:var(--ok);font-weight:700}
-  .cov-ko{color:var(--ko);font-weight:700}
-  .cov-hi{color:#b8860b;font-weight:700}
-  .emlab{display:inline-block;padding:2px 8px;border-radius:11px;font-size:11px;font-weight:700;color:#fff;letter-spacing:.3px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-  .em-rad{background:var(--bleu2)}
-  .em-ss{background:var(--accent)}
-  .tabs{display:flex;gap:2px;margin:0 0 20px;border-bottom:2px solid var(--bord);flex-wrap:wrap}
-  .tabs button{background:none;border:none;border-bottom:3px solid transparent;padding:11px 20px;font-size:14px;font-weight:600;color:var(--muted);cursor:pointer;margin-bottom:-2px;border-radius:6px 6px 0 0}
-  .tabs button:hover{color:var(--bleu);background:var(--gris)}
-  .tabs button.active{color:var(--bleu);border-bottom-color:var(--accent)}
-  .tabcount{display:inline-block;margin-left:7px;background:var(--accent);color:#fff;font-size:11px;font-weight:700;border-radius:9px;padding:1px 7px;vertical-align:middle}
-  th.sortable{cursor:pointer;user-select:none;white-space:nowrap}
-  th.sortable:hover{background:rgba(255,255,255,.14)}
-  th.sort-asc::after,th.sort-desc::after{content:'';display:inline-block;width:0;height:0;margin-left:6px;vertical-align:middle;border-left:4px solid transparent;border-right:4px solid transparent}
-  th.sort-asc::after{border-bottom:5px solid currentColor}
-  th.sort-desc::after{border-top:5px solid currentColor}
-  .regwarn{background:#fdecea;border:1px solid var(--ko);color:#8a1f16;border-radius:6px;padding:10px 14px;font-size:13px;font-weight:600;margin:10px 0}
-  .manflag{color:var(--accent);font-weight:700}
-  .paramsec{margin:0 0 20px;padding:14px 16px;border:1px solid var(--bord);border-radius:8px;background:#fcfdff}
-  .paramhead{font-size:13px;font-weight:700;color:#fff;background:var(--bleu2);border-radius:5px;padding:5px 12px;display:inline-block;margin-bottom:12px;letter-spacing:.4px}
-  .paramsec.ss .paramhead{background:var(--accent)}
-  .prodlink{display:inline-block;margin-top:6px;font-size:12px;color:var(--bleu);font-weight:600;text-decoration:none;border-bottom:1px dotted var(--bleu)}
-  .prodlink:hover{color:var(--bleu2);border-bottom-style:solid}
-  /* Impression = dossier de dimensionnement : on n'imprime QUE la vue Dimensionnement (ni Projet, ni Gestion, ni Base fabricant). */
-  @media print{ .tabs{display:none!important} .panel[data-view]{display:none!important} .panel[data-view="dim"]{display:block!important} }
-  .note{font-size:12px;color:var(--muted);margin-top:10px;line-height:1.6}
-  .tablewrap{overflow-x:auto;max-height:70vh;overflow-y:auto;border:1px solid var(--bord);border-radius:6px}
-  .synth{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
-  .card{background:var(--gris);border:1px solid var(--bord);border-radius:7px;padding:11px 13px}
-  .card .k{font-size:12px;color:var(--muted)}
-  .card .v{font-size:22px;font-weight:700;color:var(--bleu)}
-  .card .u{font-size:12px;color:var(--muted)}
-  details.meth{font-size:13px;line-height:1.7}
-  details.meth summary{cursor:pointer;font-weight:600;color:var(--bleu2)}
-  code{background:var(--gris);padding:1px 5px;border-radius:3px;font-size:12px}
-  .miniinp{width:74px;padding:3px 5px;font-size:12px}
-  .kt th,.kt td{font-size:12px;padding:3px 6px}
-  @media print{
-    header{background:var(--bleu) !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-    .noprint{display:none !important}
-    .panel{break-inside:avoid;box-shadow:none}
-    .tablewrap{max-height:none;overflow:visible}
-    th{position:static}
-    body{background:#fff;font-size:11px}
-  }
+  .tabs{display:none !important}
+  .panel[data-view]{display:none !important}
+  .panel[data-view="dim"]{display:block !important}
+  .noprint{display:none !important}
+  header{position:static;border-bottom:1px solid var(--ligne)}
+  .bouton-theme{display:none !important}
+  .panel{break-inside:avoid;box-shadow:none;border:1px solid var(--ligne)}
+  .tablewrap{max-height:none;overflow:visible}
+  th{position:static}
+  body{background:#fff;font-size:11px}
+}
 </style>
+<!-- Thème appliqué avant le premier rendu, pour éviter un flash clair au chargement en sombre. -->
+<script>try{var t=localStorage.getItem('finimetal_theme');document.documentElement.dataset.theme=t||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');}catch(e){}</script>
 </head>
 <body>
 <header>
-  <h1>Sélectionneur de radiateurs Finimetal (panneaux)</h1>
-  <div class="sub" id="hdrSub">Dimensionnement sur régime unique à partir des déperditions Pléiades</div>
-  <div class="badge" id="hdrBadge"></div>
+  <span class="logo"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4v10.54a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0Z"/></svg></span>
+  <div class="titre">
+    <h1>Sélectionneur de radiateurs Finimetal (panneaux)</h1>
+    <span class="sub" id="hdrSub">Dimensionnement sur régime unique à partir des déperditions Pléiades</span>
+  </div>
+  <span class="espace"></span>
+  <div class="badge"><svg class="ico" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 20H2"/><path d="M11 4.562v16.157a1 1 0 0 0 1.242.97L19 20V5.562a2 2 0 0 0-1.515-1.94l-4-1A2 2 0 0 0 11 4.561z"/><path d="M11 4H8a2 2 0 0 0-2 2v14"/><path d="M14 12h.01"/><path d="M22 20h-3"/></svg><span id="hdrBadge"></span></div>
+  <button type="button" class="bouton-theme noprint" id="btnTheme" aria-label="Changer de thème"></button>
 </header>
 
 <div class="wrap">
 
   <div class="tabs noprint">
-    <button data-view="projet" onclick="showView('projet')">Projet &amp; import</button>
-    <button data-view="pieces" onclick="showView('pieces')">Gestion des pièces <span class="tabcount" id="tabCountPieces"></span></button>
-    <button data-view="dim" onclick="showView('dim')">Dimensionnement</button>
-    <button data-view="db" onclick="showView('db')">Base de données fabricant</button>
+    <button data-view="projet" data-ico="dossier" onclick="showView('projet')">Projet &amp; import</button>
+    <button data-view="pieces" data-ico="piece" onclick="showView('pieces')">Gestion des pièces <span class="tabcount" id="tabCountPieces"></span></button>
+    <button data-view="dim" data-ico="dimensionnement" onclick="showView('dim')">Dimensionnement</button>
+    <button data-view="db" data-ico="base_donnees" onclick="showView('db')">Base de données fabricant</button>
   </div>
 
   <!-- ===================== 0. PROJET / IMPORT ===================== -->
   <div class="panel" data-view="projet">
-    <h2 onclick="toggle(this)">0. Projet (fichier .json) et import Pléiades (.slk) <span class="chev">v</span></h2>
+    <h2 onclick="toggle(this)" data-ico="dossier">0. Projet (fichier .json) et import Pléiades (.slk) <span class="chev" data-ico="chevron_bas" data-ico-taille="15"></span></h2>
     <div class="body">
       <div class="grid">
         <div class="fld">
@@ -132,19 +319,20 @@
         </div>
         <div class="fld">
           <label>Projet chargé</label>
-          <div id="projInfo" style="padding:6px 0;font-weight:600;color:var(--bleu)"></div>
+          <div id="projInfo" style="padding:6px 0;font-weight:600;color:var(--primaire-encre)"></div>
         </div>
       </div>
-      <div id="dropzone" style="margin-top:12px;border:2px dashed var(--bord);border-radius:8px;
-        padding:16px;text-align:center;color:var(--muted);background:#fbfdff;cursor:pointer">
+      <div id="dropzone" style="margin-top:12px;border:2px dashed var(--ligne);border-radius:8px;
+        padding:16px;text-align:center;color:var(--discret);background:var(--papier-2);cursor:pointer"
+        data-ico="importer" data-ico-taille="20">
 Glissez-déposez ici un ou plusieurs fichiers <b>.slk</b> (déperditions Pléiades, 1 par bâtiment) - ils s'ajoutent au projet. Ou un fichier projet <b>.json</b>.
       </div>
       <div id="importMsg" style="margin-top:10px;font-size:13px"></div>
       <input type="file" id="fileJson" accept=".json,application/json" style="display:none">
       <div class="toolbar noprint" style="margin-top:14px">
-        <button class="btn" onclick="openProject()">Ouvrir un projet (.json)</button>
-        <button class="btn" onclick="saveProject()">Enregistrer le projet (.json)</button>
-        <button class="btn sec" onclick="newProject()">Nouveau projet (vide)</button>
+        <button class="btn" data-ico="dossier" onclick="openProject()">Ouvrir un projet (.json)</button>
+        <button class="btn" data-ico="enregistrer" onclick="saveProject()">Enregistrer le projet (.json)</button>
+        <button class="btn sec" data-ico="nouveau" onclick="newProject()">Nouveau projet (vide)</button>
       </div>
       <div class="note" style="margin-top:8px">
         Un projet = un fichier <b>.json</b> (pièces, régime, choix manuels, catalogue). "Enregistrer" écrit dans le fichier
@@ -155,7 +343,7 @@ Glissez-déposez ici un ou plusieurs fichiers <b>.slk</b> (déperditions Pléiad
 
   <!-- ===================== GESTION DES PIECES ===================== -->
   <div class="panel" data-view="pieces">
-    <h2>Gestion des pièces (émetteur, renommer, supprimer)</h2>
+    <h2 data-ico="piece">Gestion des pièces (émetteur, renommer, supprimer)</h2>
     <div class="body">
       <div class="note noprint" style="margin-top:0">
         Définissez l'émetteur de chaque pièce (radiateur panneau ou sèche-serviette). Par défaut, les pièces
@@ -170,8 +358,8 @@ Glissez-déposez ici un ou plusieurs fichiers <b>.slk</b> (déperditions Pléiad
           <option value="rad">Radiateurs seuls</option>
           <option value="ss">Sèche-serviettes seuls</option>
         </select>
-        <button class="btn sec mini" onclick="rmReset()">Réinitialiser</button>
-        <span id="rmCount" style="margin-left:auto;font-size:12px;color:var(--muted)"></span>
+        <button class="btn sec mini" data-ico="reinitialiser" data-ico-taille="14" onclick="rmReset()">Réinitialiser</button>
+        <span id="rmCount" style="margin-left:auto;font-size:12px;color:var(--discret)"></span>
       </div>
       <div class="tablewrap">
         <table id="roomTbl"></table>
@@ -181,10 +369,10 @@ Glissez-déposez ici un ou plusieurs fichiers <b>.slk</b> (déperditions Pléiad
 
   <!-- ===================== 1. PARAMETRES ===================== -->
   <div class="panel" data-view="dim">
-    <h2 onclick="toggle(this)">1. Paramètres de sélection <span class="chev">v</span></h2>
+    <h2 onclick="toggle(this)" data-ico="parametres">1. Paramètres de sélection <span class="chev" data-ico="chevron_bas" data-ico-taille="15"></span></h2>
     <div class="body">
       <div class="paramsec rad">
-        <div class="paramhead">Paramètres radiateurs</div>
+        <div class="paramhead" data-ico="radiateur" data-ico-taille="15">Paramètres radiateurs</div>
         <div class="grid">
           <div class="fld">
             <label>Énergie radiateur</label>
@@ -197,7 +385,7 @@ Glissez-déposez ici un ou plusieurs fichiers <b>.slk</b> (déperditions Pléiad
           <div class="fld">
             <label>Modèle de radiateur</label>
             <select id="model"></select>
-            <a id="modelLink" class="prodlink noprint" target="_blank" rel="noopener" style="display:none">Ouvrir la fiche produit Finimetal</a>
+            <a id="modelLink" class="prodlink noprint" target="_blank" rel="noopener" data-ico="externe" data-ico-taille="13" style="display:none">Ouvrir la fiche produit Finimetal</a>
             <span class="hint" id="modelHint">Gamme Finimetal</span>
           </div>
           <div class="fld waterOnly">
@@ -255,7 +443,7 @@ Glissez-déposez ici un ou plusieurs fichiers <b>.slk</b> (déperditions Pléiad
         </div>
       </div>
       <div class="paramsec ss">
-        <div class="paramhead">Paramètres sèche-serviettes</div>
+        <div class="paramhead" data-ico="seche_serviette" data-ico-taille="15">Paramètres sèche-serviettes</div>
         <div class="grid">
           <div class="fld">
             <label>Énergie sèche-serviette</label>
@@ -269,7 +457,7 @@ Glissez-déposez ici un ou plusieurs fichiers <b>.slk</b> (déperditions Pléiad
           <div class="fld">
             <label>Modèle sèche-serviette</label>
             <select id="ssModel"></select>
-            <a id="ssModelLink" class="prodlink noprint" target="_blank" rel="noopener" style="display:none">Ouvrir la fiche produit Finimetal</a>
+            <a id="ssModelLink" class="prodlink noprint" target="_blank" rel="noopener" data-ico="externe" data-ico-taille="13" style="display:none">Ouvrir la fiche produit Finimetal</a>
             <span class="hint">Auto sur les pièces "salle de bain / salle d'eau"</span>
           </div>
           <div class="fld ssRegime">
@@ -304,16 +492,16 @@ Glissez-déposez ici un ou plusieurs fichiers <b>.slk</b> (déperditions Pléiad
       <div class="live" id="liveBox"></div>
 
       <div class="toolbar noprint" style="margin-top:14px">
-        <button class="btn" id="btnRecalc" onclick="recalcAll()">Réinitialiser les choix manuels</button>
-        <button class="btn sec" id="btnCsv" onclick="exportCSV()">Exporter le bordereau (CSV)</button>
-        <button class="btn sec" id="btnPrint" onclick="window.print()">Imprimer / PDF</button>
+        <button class="btn" id="btnRecalc" data-ico="reinitialiser" onclick="recalcAll()">Réinitialiser les choix manuels</button>
+        <button class="btn sec" id="btnCsv" data-ico="csv" onclick="exportCSV()">Exporter le bordereau (CSV)</button>
+        <button class="btn sec" id="btnPrint" data-ico="imprimer" onclick="window.print()">Imprimer / PDF</button>
       </div>
     </div>
   </div>
 
   <!-- ===================== 2. SYNTHESE ===================== -->
   <div class="panel" data-view="dim">
-    <h2 onclick="toggle(this)">2. Synthèse du projet <span class="chev">v</span></h2>
+    <h2 onclick="toggle(this)" data-ico="synthese">2. Synthèse du projet <span class="chev" data-ico="chevron_bas" data-ico-taille="15"></span></h2>
     <div class="body">
       <div class="synth" id="synth"></div>
       <div style="margin-top:16px">
@@ -327,7 +515,7 @@ Glissez-déposez ici un ou plusieurs fichiers <b>.slk</b> (déperditions Pléiad
 
   <!-- ===================== 3. TABLEAU PIECES ===================== -->
   <div class="panel" data-view="dim">
-    <h2 onclick="toggle(this)">3. Sélection pièce par pièce <span class="chev">v</span></h2>
+    <h2 onclick="toggle(this)" data-ico="tableau">3. Sélection pièce par pièce <span class="chev" data-ico="chevron_bas" data-ico-taille="15"></span></h2>
     <div class="body">
       <div class="note noprint" style="margin-top:0">
         Ti et P requise proviennent de Pléiades (non modifiables). Colonnes ajustables :
@@ -335,7 +523,7 @@ Glissez-déposez ici un ou plusieurs fichiers <b>.slk</b> (déperditions Pléiad
         Bouton <b>Auto</b> = revenir à la sélection automatique. Astérisque <b>*</b> = pièce en choix manuel.
         Couverture verte = dans la tolérance, rouge = insuffisant, orange = au-delà de la tolérance maxi.
       </div>
-      <div id="regimeWarn" class="regwarn" style="display:none">
+      <div id="regimeWarn" class="regwarn" style="display:none" data-ico="attention" data-ico-taille="17">
         Régime non saisi : renseignez la <b>température aller / retour</b> (bloc Paramètres) pour dimensionner les émetteurs à eau. Export et impression désactivés.
       </div>
       <div class="tablewrap">
@@ -346,7 +534,7 @@ Glissez-déposez ici un ou plusieurs fichiers <b>.slk</b> (déperditions Pléiad
 
   <!-- ===================== 4. CATALOGUE ===================== -->
   <div class="panel" data-view="dim">
-    <h2 onclick="toggle(this,true)">4. Catalogue du modèle courant et méthode <span class="chev">&gt;</span></h2>
+    <h2 onclick="toggle(this,true)" data-ico="catalogue">4. Catalogue du modèle courant et méthode <span class="chev" data-ico="chevron" data-ico-taille="15"></span></h2>
     <div class="body" style="display:none">
       <p class="note" style="margin-top:0">
         Puissances à <b>DT50</b> (75/65/20 °C selon EN 442), en <b>W/m</b> (watts par mètre), et exposant <b>n</b> (Pente)
@@ -357,7 +545,7 @@ Glissez-déposez ici un ou plusieurs fichiers <b>.slk</b> (déperditions Pléiad
         <table id="catTbl" class="kt"></table>
       </div>
       <details class="meth" style="margin-top:16px">
-        <summary>Méthode de calcul (à lire)</summary>
+        <summary data-ico="info" data-ico-taille="14">Méthode de calcul (à lire)</summary>
         <p><b>Puissance requise</b> par pièce = colonne "Total" des déperditions Pléiades (base + relance), ou vos valeurs saisies.</p>
         <p><b>Écart de température</b> pour la consigne réelle de chaque pièce, en moyenne arithmétique
         (convention Finimetal) : <code>DT = (Te + Ts)/2 - Ti</code>.</p>
@@ -366,7 +554,7 @@ Glissez-déposez ici un ou plusieurs fichiers <b>.slk</b> (déperditions Pléiad
         <p><b>Puissance émise</b> = W/m x longueur(m) x f. La sélection auto retient la plus petite longueur réellement
         disponible (variable selon le type et la hauteur) couvrant la puissance requise majorée de la tolérance mini,
         en privilégiant le type le plus fin.</p>
-        <p style="color:var(--muted)">Données extraites du calculateur officiel Finimetal (marché France). Chaque
+        <p style="color:var(--discret)">Données extraites du calculateur officiel Finimetal (marché France). Chaque
         modèle a ses propres puissances : contrairement à une idée reçue, Compact, Standard et Intégré ne sont pas
         identiques (Standard et Intégré émettent un peu plus). Deco reprend le corps du Plan.</p>
       </details>
@@ -375,7 +563,7 @@ Glissez-déposez ici un ou plusieurs fichiers <b>.slk</b> (déperditions Pléiad
 
   <!-- ===================== BASE DE DONNEES FABRICANT ===================== -->
   <div class="panel" data-view="db">
-    <h2>Base de données fabricant (Finimetal - marché France, lecture seule)</h2>
+    <h2 data-ico="base_donnees">Base de données fabricant (Finimetal - marché France, lecture seule)</h2>
     <div class="body">
       <div class="note" style="margin-top:0">
         Catalogue officiel Finimetal (tous les modèles panneaux, décoratifs, électriques et sèche-serviettes du marché
@@ -390,8 +578,8 @@ Glissez-déposez ici un ou plusieurs fichiers <b>.slk</b> (déperditions Pléiad
         <select id="dbEnergie" class="cell" style="max-width:150px" onchange="dbPickCat()"></select>
         <select id="dbModel" class="cell" style="max-width:260px" onchange="renderDbTable()"></select>
         <input type="text" id="dbSearch" placeholder="Filtrer (hauteur, longueur, code)..." style="max-width:230px" oninput="dbSearchInput()">
-        <a id="dbLink" class="prodlink" target="_blank" rel="noopener" style="display:none;margin-top:0">Ouvrir la fiche produit Finimetal</a>
-        <span id="dbInfo" style="margin-left:auto;font-size:12px;color:var(--muted)"></span>
+        <a id="dbLink" class="prodlink" target="_blank" rel="noopener" data-ico="externe" data-ico-taille="13" style="display:none;margin-top:0">Ouvrir la fiche produit Finimetal</a>
+        <span id="dbInfo" style="margin-left:auto;font-size:12px;color:var(--discret)"></span>
       </div>
       <div class="tablewrap">
         <table id="dbTbl" class="kt"></table>
@@ -428,6 +616,62 @@ const CATALOG = {"rad_eau":[{"pid":"238150","key":"compact","name":"Reggane 3010
 
 function mTypes(S){ return mdl(S).types || TYPE_ORDER; }
 
+/* ============================ ICONES (Lucide) ============================ */
+// Icones Lucide (lucide.dev, licence ISC), traces embarques pour que l'outil reste
+// utilisable hors ligne et en file:// : aucune requete externe. Trait 2, bouts ronds,
+// grille 24. Meme convention que l'outil planif, pour que les deux se ressemblent.
+// Usage : ico('radiateur', 16) renvoie une chaine SVG qui herite de la couleur du texte.
+const TRACES_ICONES = {
+  ok: '<path d="M20 6 9 17l-5-5"/>',
+  fermer: '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
+  chevron: '<path d="m9 18 6-6-6-6"/>',
+  chevron_bas: '<path d="m6 9 6 6 6-6"/>',
+  plus: '<path d="M5 12h14"/><path d="M12 5v14"/>',
+  moins: '<path d="M5 12h14"/>',
+  info: '<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>',
+  attention: '<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/>',
+  crayon: '<path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/>',
+  externe: '<path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>',
+  soleil: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>',
+  lune: '<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>',
+  recherche: '<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',
+  fichier: '<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/>',
+  dossier: '<path d="m6 14 1.5-2.9A2 2 0 0 1 9.24 10H20a2 2 0 0 1 1.94 2.5l-1.54 6a2 2 0 0 1-1.95 1.5H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H18a2 2 0 0 1 2 2v2"/>',
+  coche_cercle: '<circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>',
+  liste: '<path d="M3 12h.01"/><path d="M3 18h.01"/><path d="M3 6h.01"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M8 6h13"/>',
+  reglages: '<line x1="21" x2="14" y1="4" y2="4"/><line x1="10" x2="3" y1="4" y2="4"/><line x1="21" x2="12" y1="12" y2="12"/><line x1="8" x2="3" y1="12" y2="12"/><line x1="21" x2="16" y1="20" y2="20"/><line x1="12" x2="3" y1="20" y2="20"/><line x1="14" x2="14" y1="2" y2="6"/><line x1="8" x2="8" y1="10" y2="14"/><line x1="16" x2="16" y1="18" y2="22"/>',
+  radiateur: '<path d="M14 4v10.54a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0Z"/>',
+  seche_serviette: '<path d="M10 4 8 6"/><path d="M17 19v2"/><path d="M2 12h20"/><path d="M7 19v2"/><path d="M9 5 7.621 3.621A2.121 2.121 0 0 0 4 5v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5"/>',
+  dimensionnement: '<path d="M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.41 2.41 0 0 1 0-3.4l2.6-2.6a2.41 2.41 0 0 1 3.4 0Z"/><path d="m14.5 12.5 2-2"/><path d="m11.5 9.5 2-2"/><path d="m8.5 6.5 2-2"/><path d="m17.5 15.5 2-2"/>',
+  base_donnees: '<ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19A9 3 0 0 0 21 19V5"/><path d="M3 12A9 3 0 0 0 21 12"/>',
+  tableau: '<path d="M12 3v18"/><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M3 15h18"/>',
+  imprimer: '<path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 9V3a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6"/><rect x="6" y="14" width="12" height="8" rx="1"/>',
+  telecharger: '<path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/>',
+  importer: '<path d="M12 3v12"/><path d="m17 8-5-5-5 5"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>',
+  enregistrer: '<path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h7"/>',
+  supprimer: '<path d="M10 11v6"/><path d="M14 11v6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>',
+  piece: '<path d="M11 20H2"/><path d="M11 4.562v16.157a1 1 0 0 0 1.242.97L19 20V5.562a2 2 0 0 0-1.515-1.94l-4-1A2 2 0 0 0 11 4.561z"/><path d="M11 4H8a2 2 0 0 0-2 2v14"/><path d="M14 12h.01"/><path d="M22 20h-3"/>',
+  batiment: '<path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
+  csv: '<path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="M8 13h2"/><path d="M14 13h2"/><path d="M8 17h2"/><path d="M14 17h2"/>',
+  json: '<path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="M10 12a1 1 0 0 0-1 1v1a1 1 0 0 1-1 1 1 1 0 0 1 1 1v1a1 1 0 0 0 1 1"/><path d="M14 18a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1 1 1 0 0 1-1-1v-1a1 1 0 0 0-1-1"/>',
+  synthese: '<path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/>',
+  catalogue: '<path d="M12 5v16"/><path d="M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z"/>',
+  eau: '<path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/>',
+  electrique: '<path d="M15.914 4a1.5 1.5 0 00-2.474-1.561l-9 9A1.5 1.5 0 005.5 14h4.002a.5.5 0 01.471.666L8.086 20a1.5 1.5 0 002.475 1.56l9-9A1.5 1.5 0 0018.5 10h-3.997a.5.5 0 01-.472-.667z"/>',
+  nouveau: '<path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="M9 15h6"/><path d="M12 18v-6"/>',
+  puissance: '<path d="M12 3q1 4 4 6.5t3 5.5a1 1 0 0 1-14 0 5 5 0 0 1 1-3 1 1 0 0 0 5 0c0-2-1.5-3-1.5-5q0-2 2.5-4"/>',
+  trier: '<path d="m21 16-4 4-4-4"/><path d="M17 20V4"/><path d="m3 8 4-4 4 4"/><path d="M7 4v16"/>',
+  types: '<path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"/><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"/><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"/>',
+  reinitialiser: '<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>',
+  parametres: '<path d="M10 5H3"/><path d="M12 19H3"/><path d="M14 3v4"/><path d="M16 17v4"/><path d="M21 12h-9"/><path d="M21 19h-5"/><path d="M21 5h-7"/><path d="M8 10v4"/><path d="M8 12H3"/>',
+};
+
+function ico(nom, taille = 16, classe = ''){
+  const traces = TRACES_ICONES[nom] || TRACES_ICONES.info;
+  return `<svg class="ico ${classe}" width="${taille}" height="${taille}" viewBox="0 0 24 24"`
+    + ` fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"`
+    + ` stroke-linejoin="round" aria-hidden="true">${traces}</svg>`;
+}
 /* ============================ ETAT GLOBAL ============================ */
 let ROOMS   = [];        // {id, bat, apt, piece, Ti, surf, dep, total, emitter?}
 let PROJECT_NAME = "";
@@ -672,7 +916,7 @@ function render(){
       : `<td>${selType(id,e,S)}</td><td>${selHeight(id,e,S)}</td><td>${selLen(id,e,S)}</td>`;
     html+=`<tr>`+
       `<td class="l">${esc(r.apt)}</td><td class="l">${esc(r.piece)}${e.manual?' <span class="manflag" title="Choix manuel">*</span>':''}</td>`+
-      `<td>${bath?'<span class="emlab em-ss">SS</span>':'<span class="emlab em-rad">RAD</span>'}</td>`+
+      `<td>${bath?`<span class="emlab em-ss">${ico('seche_serviette',12)}SS</span>`:`<span class="emlab em-rad">${ico('radiateur',12)}RAD</span>`}</td>`+
       `<td>${e.Ti}</td>`+
       `<td>${nf1.format(r.surf||0)}</td>`+
       `<td><b>${nf.format(Math.round(e.Q))}</b></td>`+
@@ -734,7 +978,7 @@ function renderRoomMgmt(){
       `<td class="l">${esc(r.apt||'')}</td>`+
       `<td class="l"><input type="text" style="width:160px" value="${attr(r.piece)}" onchange="setPiece(${r.id},this.value)"></td>`+
       `<td>${r.Ti}</td><td>${nf1.format(r.surf||0)}</td><td>${nf.format(reqOf(S,r))}</td>`+
-      `<td><span class="emlab ${isTowel(r)?'em-ss':'em-rad'}" style="margin-right:6px">${isTowel(r)?'SS':'RAD'}</span>`+
+      `<td><span class="emlab ${isTowel(r)?'em-ss':'em-rad'}" style="margin-right:6px">`+`${ico(isTowel(r)?'seche_serviette':'radiateur',12)}${isTowel(r)?'SS':'RAD'}</span>`+
       `<select class="cell" style="max-width:140px" onchange="setEmitter(${r.id},this.value)">`+
         `<option value="auto" ${em==='auto'?'selected':''}>Auto (${autoss?'sèche-serviette':'radiateur'})</option>`+
         `<option value="panneau" ${em==='panneau'?'selected':''}>Radiateur panneau</option>`+
@@ -773,12 +1017,12 @@ function setLink(id,prod){ const a=$(id); if(!a) return; const u=prod&&prod.url;
   else { a.style.display='none'; a.removeAttribute('href'); } }
 function updateModelLinks(S){ setLink('modelLink', radProduct(S)); setLink('ssModelLink', ssProduct(S)); }
 function renderLive(S){
-  const radReg = (S.radTe>0 && S.radTs>0)? `${S.radTe}/${S.radTs} °C` : '<span style="color:var(--ko)">non saisi</span>';
-  const ssReg = (S.ssTe>0 && S.ssTs>0)? `${S.ssTe}/${S.ssTs} °C` : '<span style="color:var(--ko)">non saisi</span>';
+  const radReg = (S.radTe>0 && S.radTs>0)? `${S.radTe}/${S.radTs} °C` : '<span style="color:var(--haute)">non saisi</span>';
+  const ssReg = (S.ssTe>0 && S.ssTs>0)? `${S.ssTe}/${S.ssTs} °C` : '<span style="color:var(--haute)">non saisi</span>';
   const ssP=ssProduct(S), ssFixed=(S.ssEnergy==='elec');
   const parts=[
-    `<b style="color:var(--bleu2)">Radiateurs ${isElec(S)?'électriques':'eau'}</b> : ${esc(radModelName(S))}`+(isElec(S)?'':` - régime <b>${radReg}</b>`),
-    `<b style="color:var(--accent)">Sèche-serviettes ${SS_LABEL[S.ssEnergy]||''}</b> : ${esc(ssP?ssP.name:'(aucun)')}`+(ssFixed?'':` - régime <b>${ssReg}</b>`)
+    `<b style="color:var(--primaire-encre)">${ico(isElec(S)?'electrique':'eau',14)} Radiateurs ${isElec(S)?'électriques':'eau'}</b> : ${esc(radModelName(S))}`+(isElec(S)?'':` - régime <b>${radReg}</b>`),
+    `<b style="color:var(--moyenne)">${ico('seche_serviette',14)} Sèche-serviettes ${SS_LABEL[S.ssEnergy]||''}</b> : ${esc(ssP?ssP.name:'(aucun)')}`+(ssFixed?'':` - régime <b>${ssReg}</b>`)
   ];
   $('liveBox').innerHTML = parts.map(p=>`<div>${p}</div>`).join('');
 }
@@ -795,14 +1039,14 @@ function renderSynth(S){
   if(nElec) parts.push(`${nElec} radiateur(s) élec`);
   if(nSS) parts.push(`${nSS} sèche-serviette(s)`);
   $('synth').innerHTML=
-    card('Puissance requise', nf.format(Math.round(req)), 'W ('+nf1.format(req/1000)+' kW)')+
-    card('Puissance émise', nf.format(Math.round(emit)), 'W')+
-    card('Couverture globale', ROOMS.length?nf1.format(cov):'-', '%')+
-    card('Nombre d\'émetteurs', N, parts.join(' + ')||'-')+
-    card('Pièces en choix manuel', nMan, nMan?'ajustées à la main':'aucune', nMan?'var(--accent)':'')+
-    card('Pièces hors tolérance', ko, ko?'à revoir':'OK', ko?'var(--ko)':'var(--ok)');
+    card('Puissance requise', nf.format(Math.round(req)), 'W ('+nf1.format(req/1000)+' kW)', '', 'puissance')+
+    card('Puissance émise', nf.format(Math.round(emit)), 'W', '', 'radiateur')+
+    card('Couverture globale', ROOMS.length?nf1.format(cov):'-', '%', '', 'synthese')+
+    card('Nombre d\'émetteurs', N, parts.join(' + ')||'-', '', 'types')+
+    card('Pièces en choix manuel', nMan, nMan?'ajustées à la main':'aucune', nMan?'var(--moyenne)':'', 'crayon')+
+    card('Pièces hors tolérance', ko, ko?'à revoir':'OK', ko?'var(--haute)':'var(--ok)', ko?'attention':'coche_cercle');
 }
-function card(k,v,u,color){ return `<div class="card"><div class="k">${k}</div>`+
+function card(k,v,u,color,icone){ return `<div class="card"><div class="k">${icone?ico(icone,13):''}${k}</div>`+
   `<div class="v" ${color?`style="color:${color}"`:''}>${v}</div><div class="u">${u}</div></div>`; }
 function renderBordereau(S){
   const pan={}, it={};
@@ -917,7 +1161,7 @@ function recalcAll(){ const n=Object.keys(overrides).length;
   if(n && !confirm(`Réinitialiser en automatique ${n} pièce(s) ajustée(s) manuellement ? Les choix manuels seront perdus.`)) return;
   overrides={}; persist(); render(); }
 function toggle(h){ const b=h.nextElementSibling; const open=b.style.display!=='none';
-  b.style.display=open?'none':''; h.querySelector('.chev').textContent=open?'>':'v'; }
+  b.style.display=open?'none':''; h.querySelector('.chev').innerHTML=ico(open?'chevron':'chevron_bas',15); }
 let CUR_VIEW='dim';
 function showView(v){
   if(!['projet','pieces','dim','db'].includes(v)) v='dim';
@@ -1220,7 +1464,7 @@ function handleFiles(files){
 }
 function handleFile(file){ handleFiles(file?[file]:[]); }
 function msg(t,kind){ const el=$('importMsg'); el.textContent=t;
-  el.style.color=kind==='ko'?'var(--ko)':(kind==='ok'?'var(--ok)':'var(--muted)'); }
+  el.style.color=kind==='ko'?'var(--haute)':(kind==='ok'?'var(--ok)':'var(--discret)'); }
 
 /* ============================ INIT ============================ */
 document.querySelectorAll('input,select').forEach(el=>{
@@ -1240,8 +1484,8 @@ $('projName').addEventListener('input',()=>{ PROJECT_NAME=$('projName').value; p
 $('fileSlk').addEventListener('change',e=>{ handleFiles(e.target.files); e.target.value=''; });
 $('fileJson').addEventListener('change',e=>{ handleJson(e.target.files[0]); e.target.value=''; });
 (function(){ const dz=$('dropzone');
-  ['dragenter','dragover'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();dz.style.background='#eef6ff';dz.style.borderColor='var(--bleu2)';}));
-  ['dragleave','drop'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();dz.style.background='#fbfdff';dz.style.borderColor='var(--bord)';}));
+  ['dragenter','dragover'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();dz.style.background='var(--primaire-fond)';dz.style.borderColor='var(--primaire)';}));
+  ['dragleave','drop'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();dz.style.background='var(--papier-2)';dz.style.borderColor='var(--ligne)';}));
   dz.addEventListener('drop',e=>{ handleFiles(e.dataTransfer.files); });
   dz.addEventListener('click',()=>$('fileSlk').click());
 })();
@@ -1256,6 +1500,46 @@ render();
   if(!v) v = ROOMS.length? 'dim' : 'projet';
   showView(v);
 })();
+/* ============================ THEME ET INJECTION DES ICONES ============================ */
+// Tout element portant data-ico recoit l'icone Lucide correspondante en tete de son contenu.
+// Evite de recopier des SVG entiers dans le HTML des vues : un nom d'icone suffit.
+function poserIcones(racine){
+  (racine || document).querySelectorAll('[data-ico]').forEach(el => {
+    if(el.dataset.icoPose) return;            // ne pas doubler si la fonction est rappelee
+    const taille = +el.dataset.icoTaille || 16;
+    el.insertAdjacentHTML('afterbegin', ico(el.dataset.ico, taille));
+    el.dataset.icoPose = '1';
+  });
+}
+
+// Theme clair / sombre : choix memorise, sinon reglage systeme. Le <head> applique deja le
+// theme avant le premier rendu ; ici on ne gere que le bouton et les changements.
+function appliquerTheme(t){
+  document.documentElement.dataset.theme = t;
+  const b = $('btnTheme');
+  if(b){
+    b.innerHTML = ico(t === 'dark' ? 'soleil' : 'lune', 16);
+    b.title = t === 'dark' ? 'Passer en thème clair' : 'Passer en thème sombre';
+  }
+}
+
+function themeMemorise(){ try{ return localStorage.getItem('finimetal_theme'); }catch(e){ return null; } }
+
+function initTheme(){
+  const systeme = () => matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  appliquerTheme(themeMemorise() || systeme());
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', ev => {
+    if(!themeMemorise()) appliquerTheme(ev.matches ? 'dark' : 'light');
+  });
+  $('btnTheme').addEventListener('click', () => {
+    const t = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+    try{ localStorage.setItem('finimetal_theme', t); }catch(e){}
+    appliquerTheme(t);
+  });
+}
+
+poserIcones();
+initTheme();
 </script>
 </body>
 </html>

@@ -1,6 +1,6 @@
   <!-- ===================== BASE DE DONNEES FABRICANT ===================== -->
   <div class="panel" data-view="db">
-    <h2>Base de données fabricant (Finimetal - marché France, lecture seule)</h2>
+    <h2 data-ico="base_donnees">Base de données fabricant (Finimetal - marché France, lecture seule)</h2>
     <div class="body">
       <div class="note" style="margin-top:0">
         Catalogue officiel Finimetal (tous les modèles panneaux, décoratifs, électriques et sèche-serviettes du marché
@@ -15,8 +15,8 @@
         <select id="dbEnergie" class="cell" style="max-width:150px" onchange="dbPickCat()"></select>
         <select id="dbModel" class="cell" style="max-width:260px" onchange="renderDbTable()"></select>
         <input type="text" id="dbSearch" placeholder="Filtrer (hauteur, longueur, code)..." style="max-width:230px" oninput="dbSearchInput()">
-        <a id="dbLink" class="prodlink" target="_blank" rel="noopener" style="display:none;margin-top:0">Ouvrir la fiche produit Finimetal</a>
-        <span id="dbInfo" style="margin-left:auto;font-size:12px;color:var(--muted)"></span>
+        <a id="dbLink" class="prodlink" target="_blank" rel="noopener" data-ico="externe" data-ico-taille="13" style="display:none;margin-top:0">Ouvrir la fiche produit Finimetal</a>
+        <span id="dbInfo" style="margin-left:auto;font-size:12px;color:var(--discret)"></span>
       </div>
       <div class="tablewrap">
         <table id="dbTbl" class="kt"></table>

@@ -1,6 +1,6 @@
   <!-- ===================== GESTION DES PIECES ===================== -->
   <div class="panel" data-view="pieces">
-    <h2>Gestion des pièces (émetteur, renommer, supprimer)</h2>
+    <h2 data-ico="piece">Gestion des pièces (émetteur, renommer, supprimer)</h2>
     <div class="body">
       <div class="note noprint" style="margin-top:0">
         Définissez l'émetteur de chaque pièce (radiateur panneau ou sèche-serviette). Par défaut, les pièces
@@ -15,8 +15,8 @@
           <option value="rad">Radiateurs seuls</option>
           <option value="ss">Sèche-serviettes seuls</option>
         </select>
-        <button class="btn sec mini" onclick="rmReset()">Réinitialiser</button>
-        <span id="rmCount" style="margin-left:auto;font-size:12px;color:var(--muted)"></span>
+        <button class="btn sec mini" data-ico="reinitialiser" data-ico-taille="14" onclick="rmReset()">Réinitialiser</button>
+        <span id="rmCount" style="margin-left:auto;font-size:12px;color:var(--discret)"></span>
       </div>
       <div class="tablewrap">
         <table id="roomTbl"></table>
