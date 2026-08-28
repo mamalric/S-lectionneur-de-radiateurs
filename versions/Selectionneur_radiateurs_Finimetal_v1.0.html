@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sélectionneur de radiateurs Finimetal</title>
+<style>
+  :root{
+    --bleu:#123a5e; --bleu2:#1f5f92; --accent:#e2761b; --ok:#1a8a3a; --ko:#c0392b;
+    --gris:#eef2f6; --gris2:#dce4ec; --txt:#1c2b3a; --muted:#5d6b7a; --bord:#c9d4de;
+  }
+  *{box-sizing:border-box}
+  body{font-family:"Segoe UI",Arial,Helvetica,sans-serif;margin:0;color:var(--txt);background:#f4f7fa;font-size:14px;line-height:1.4}
+  header{background:linear-gradient(100deg,var(--bleu),var(--bleu2));color:#fff;padding:16px 22px}
+  header h1{margin:0 0 3px;font-size:20px;font-weight:600}
+  header .sub{font-size:13px;opacity:.92}
+  header .badge{display:inline-block;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);
+    border-radius:4px;padding:2px 8px;margin-top:6px;font-size:12px}
+  .wrap{padding:18px 22px 60px;max-width:1500px;margin:0 auto}
+  .panel{background:#fff;border:1px solid var(--bord);border-radius:8px;margin-bottom:18px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+  .panel h2{margin:0;padding:11px 16px;font-size:15px;background:var(--gris);border-bottom:1px solid var(--bord);
+    border-radius:8px 8px 0 0;display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none}
+  .panel h2 .chev{margin-left:auto;font-size:12px;color:var(--muted)}
+  .panel .body{padding:14px 16px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
+  .fld{display:flex;flex-direction:column;gap:4px}
+  .fld label{font-size:12px;font-weight:600;color:var(--muted)}
+  .fld .hint{font-size:11px;color:var(--muted);font-weight:400}
+  .pair{display:flex;gap:8px}
+  .pair>div{flex:1;display:flex;flex-direction:column;gap:4px}
+  .pair .sep{align-self:flex-end;padding-bottom:8px;color:var(--muted);font-weight:600;flex:0}
+  input[type=number],input[type=text],select{padding:6px 8px;border:1px solid var(--bord);border-radius:5px;font-size:14px;background:#fff;width:100%}
+  .chips{display:flex;gap:8px;flex-wrap:wrap}
+  .chip{display:flex;gap:5px;align-items:center;border:1px solid var(--bord);border-radius:20px;padding:5px 12px;font-size:13px;cursor:pointer;background:#fff}
+  .chip input{margin:0}
+  .btn{background:var(--bleu2);color:#fff;border:none;border-radius:5px;padding:8px 14px;font-size:13px;cursor:pointer;font-weight:600}
+  .btn:hover{background:var(--bleu)}
+  .btn.sec{background:#fff;color:var(--bleu2);border:1px solid var(--bleu2)}
+  .btn.sec:hover{background:var(--gris)}
+  .btn.mini{padding:3px 8px;font-size:11px;font-weight:600}
+  .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:6px}
+  .live{display:flex;gap:18px;flex-wrap:wrap;background:#fbf6ef;border:1px solid #f0d9bf;border-radius:6px;padding:10px 14px;margin-top:12px;font-size:13px}
+  .live b{color:var(--accent)}
+  table{border-collapse:collapse;width:100%;font-size:13px}
+  th,td{border:1px solid var(--bord);padding:5px 7px;text-align:center;white-space:nowrap}
+  th{background:var(--bleu);color:#fff;font-weight:600;position:sticky;top:0;z-index:2}
+  td.l{text-align:left}
+  td.empty{padding:26px;color:var(--muted);font-style:italic}
+  tr.apt td{background:#eaf1f7;font-weight:700;color:var(--bleu);text-align:left}
+  tbody tr:hover td{background:#f3f8ff}
+  tr.sub td{background:#f6f9fc;font-weight:600;font-style:italic;color:var(--muted)}
+  .rad{background:#fff;font-weight:600}
+  select.cell{padding:3px 4px;font-size:12px;max-width:110px}
+  input.cell{width:64px;padding:3px 4px;font-size:12px;text-align:center}
+  .cov-ok{color:var(--ok);font-weight:700}
+  .cov-ko{color:var(--ko);font-weight:700}
+  .cov-hi{color:#b8860b;font-weight:700}
+  .emlab{display:inline-block;padding:2px 8px;border-radius:11px;font-size:11px;font-weight:700;color:#fff;letter-spacing:.3px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .em-rad{background:var(--bleu2)}
+  .em-ss{background:var(--accent)}
+  .tabs{display:flex;gap:2px;margin:0 0 20px;border-bottom:2px solid var(--bord);flex-wrap:wrap}
+  .tabs button{background:none;border:none;border-bottom:3px solid transparent;padding:11px 20px;font-size:14px;font-weight:600;color:var(--muted);cursor:pointer;margin-bottom:-2px;border-radius:6px 6px 0 0}
+  .tabs button:hover{color:var(--bleu);background:var(--gris)}
+  .tabs button.active{color:var(--bleu);border-bottom-color:var(--accent)}
+  .tabcount{display:inline-block;margin-left:7px;background:var(--accent);color:#fff;font-size:11px;font-weight:700;border-radius:9px;padding:1px 7px;vertical-align:middle}
+  th.sortable{cursor:pointer;user-select:none;white-space:nowrap}
+  th.sortable:hover{background:rgba(255,255,255,.14)}
+  th.sort-asc::after,th.sort-desc::after{content:'';display:inline-block;width:0;height:0;margin-left:6px;vertical-align:middle;border-left:4px solid transparent;border-right:4px solid transparent}
+  th.sort-asc::after{border-bottom:5px solid currentColor}
+  th.sort-desc::after{border-top:5px solid currentColor}
+  @media print{ .tabs{display:none!important} .panel[data-view]{display:block!important} }
+  .note{font-size:12px;color:var(--muted);margin-top:10px;line-height:1.6}
+  .tablewrap{overflow-x:auto;max-height:70vh;overflow-y:auto;border:1px solid var(--bord);border-radius:6px}
+  .synth{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
+  .card{background:var(--gris);border:1px solid var(--bord);border-radius:7px;padding:11px 13px}
+  .card .k{font-size:12px;color:var(--muted)}
+  .card .v{font-size:22px;font-weight:700;color:var(--bleu)}
+  .card .u{font-size:12px;color:var(--muted)}
+  details.meth{font-size:13px;line-height:1.7}
+  details.meth summary{cursor:pointer;font-weight:600;color:var(--bleu2)}
+  code{background:var(--gris);padding:1px 5px;border-radius:3px;font-size:12px}
+  .miniinp{width:74px;padding:3px 5px;font-size:12px}
+  .kt th,.kt td{font-size:12px;padding:3px 6px}
+  @media print{
+    header{background:var(--bleu) !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .noprint{display:none !important}
+    .panel{break-inside:avoid;box-shadow:none}
+    .tablewrap{max-height:none;overflow:visible}
+    th{position:static}
+    body{background:#fff;font-size:11px}
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>Sélectionneur de radiateurs Finimetal (panneaux)</h1>
+  <div class="sub" id="hdrSub">Dimensionnement sur régime unique à partir des déperditions Pléiades</div>
+  <div class="badge" id="hdrBadge"></div>
+</header>
+
+<div class="wrap">
+
+  <div class="tabs noprint">
+    <button data-view="projet" onclick="showView('projet')">Projet &amp; import</button>
+    <button data-view="pieces" onclick="showView('pieces')">Gestion des pièces <span class="tabcount" id="tabCountPieces"></span></button>
+    <button data-view="dim" onclick="showView('dim')">Dimensionnement</button>
+  </div>
+
+  <!-- ===================== 0. PROJET / IMPORT ===================== -->
+  <div class="panel" data-view="projet">
+    <h2 onclick="toggle(this)">0. Projet (fichier .json) et import Pléiades (.slk) <span class="chev">v</span></h2>
+    <div class="body">
+      <div class="grid">
+        <div class="fld">
+          <label>Nom du projet</label>
+          <input type="text" id="projName" placeholder="Nom du projet">
+        </div>
+        <div class="fld">
+          <label>Ajouter des déperditions (.slk Pléiades)</label>
+          <input type="file" id="fileSlk" accept=".slk,.SLK" multiple>
+          <span class="hint">Plusieurs fichiers possibles (1 par bâtiment) - s'ajoutent au projet</span>
+        </div>
+        <div class="fld">
+          <label>Projet chargé</label>
+          <div id="projInfo" style="padding:6px 0;font-weight:600;color:var(--bleu)"></div>
+        </div>
+      </div>
+      <div id="dropzone" style="margin-top:12px;border:2px dashed var(--bord);border-radius:8px;
+        padding:16px;text-align:center;color:var(--muted);background:#fbfdff;cursor:pointer">
+Glissez-déposez ici un ou plusieurs fichiers <b>.slk</b> (déperditions Pléiades, 1 par bâtiment) - ils s'ajoutent au projet. Ou un fichier projet <b>.json</b>.
+      </div>
+      <div id="importMsg" style="margin-top:10px;font-size:13px"></div>
+      <input type="file" id="fileJson" accept=".json,application/json" style="display:none">
+      <div class="toolbar noprint" style="margin-top:14px">
+        <button class="btn" onclick="openProject()">Ouvrir un projet (.json)</button>
+        <button class="btn" onclick="saveProject()">Enregistrer le projet (.json)</button>
+        <button class="btn sec" onclick="newProject()">Nouveau projet (vide)</button>
+      </div>
+      <div class="note" style="margin-top:8px">
+        Un projet = un fichier <b>.json</b> (pièces, régime, choix manuels, catalogue). "Enregistrer" écrit dans le fichier
+        et, sur les navigateurs compatibles, se synchronise directement avec le même fichier à chaque enregistrement.
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== GESTION DES PIECES ===================== -->
+  <div class="panel" data-view="pieces">
+    <h2>Gestion des pièces (émetteur, renommer, supprimer)</h2>
+    <div class="body">
+      <div class="note noprint" style="margin-top:0">
+        Définissez l'émetteur de chaque pièce (radiateur panneau ou sèche-serviette). Par défaut, les pièces
+        "salle de bain / salle d'eau" sont détectées en sèche-serviette. Vous pouvez aussi renommer ou supprimer des pièces.
+        Cliquez un en-tête de colonne pour trier.
+      </div>
+      <div class="toolbar noprint" style="margin:12px 0;flex-wrap:wrap;gap:8px;align-items:center">
+        <input type="text" id="rmSearch" placeholder="Rechercher (pièce, logement, bâtiment)..." style="max-width:260px" oninput="renderRoomMgmt()">
+        <select id="rmBat" class="cell" style="max-width:220px" onchange="renderRoomMgmt()"><option value="">Tous les bâtiments</option></select>
+        <select id="rmEm" class="cell" style="max-width:190px" onchange="renderRoomMgmt()">
+          <option value="">Tous les émetteurs</option>
+          <option value="rad">Radiateurs seuls</option>
+          <option value="ss">Sèche-serviettes seuls</option>
+        </select>
+        <button class="btn sec mini" onclick="rmReset()">Réinitialiser</button>
+        <span id="rmCount" style="margin-left:auto;font-size:12px;color:var(--muted)"></span>
+      </div>
+      <div class="tablewrap">
+        <table id="roomTbl"></table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== 1. PARAMETRES ===================== -->
+  <div class="panel" data-view="dim">
+    <h2 onclick="toggle(this)">1. Paramètres de sélection <span class="chev">v</span></h2>
+    <div class="body">
+      <div class="grid">
+        <div class="fld">
+          <label>Modèle de radiateur</label>
+          <select id="model"></select>
+          <span class="hint">Gamme panneau Finimetal</span>
+        </div>
+        <div class="fld">
+          <label>Type de radiateur</label>
+          <div class="chips" id="allowTypes">
+            <label class="chip"><input type="checkbox" value="11" checked> Type 11</label>
+            <label class="chip"><input type="checkbox" value="21" checked> Type 21</label>
+            <label class="chip"><input type="checkbox" value="22" checked> Type 22</label>
+            <label class="chip"><input type="checkbox" value="33" checked> Type 33</label>
+          </div>
+          <span class="hint">Types candidats (le plus fin est privilégié)</span>
+        </div>
+        <div class="fld">
+          <label>Hauteur mini / maxi (mm)</label>
+          <div class="pair">
+            <div><select id="hMin"></select></div>
+            <div class="sep">à</div>
+            <div><select id="hMax"></select></div>
+          </div>
+        </div>
+        <div class="fld">
+          <label>Longueur mini / maxi (mm)</label>
+          <div class="pair">
+            <div><select id="lMin"></select></div>
+            <div class="sep">à</div>
+            <div><select id="lMax"></select></div>
+          </div>
+          <span class="hint">Longueurs de la gamme du modèle</span>
+        </div>
+        <div class="fld">
+          <label>Température aller / retour (°C)</label>
+          <div class="pair">
+            <div><input type="number" id="Te" value="" step="1" min="25" max="90" placeholder="aller"></div>
+            <div class="sep">/</div>
+            <div><input type="number" id="Ts" value="" step="1" min="20" max="85" placeholder="retour"></div>
+          </div>
+          <span class="hint">Régime du projet (à saisir)</span>
+        </div>
+        <div class="fld">
+          <label>Tolérance mini / maxi (%)</label>
+          <div class="pair">
+            <div><input type="number" id="tolMin" value="0" step="1" min="-30" max="30"></div>
+            <div class="sep">/</div>
+            <div><input type="number" id="tolMax" value="20" step="1" min="-30" max="30"></div>
+          </div>
+          <span class="hint">Écart admis / puissance requise (borné à -30 / +30 %)</span>
+        </div>
+        <div class="fld">
+          <label>Plusieurs radiateurs au-delà de (m²)</label>
+          <input type="number" id="seuil2" value="25" step="1" min="0" max="200">
+          <span class="hint">2 radiateurs si surface &gt; ce seuil (0 = désactivé)</span>
+        </div>
+        <div class="fld">
+          <label>Critère de sélection auto</label>
+          <select id="criterion">
+            <option value="thin">Type le plus fin</option>
+            <option value="compact">Encombrement mini (longueur)</option>
+            <option value="lowh">Hauteur mini</option>
+          </select>
+        </div>
+        <div class="fld">
+          <label>Modèle sèche-serviette</label>
+          <select id="ssModel"></select>
+          <span class="hint">Auto sur les pièces "salle de bain / salle d'eau"</span>
+        </div>
+        <div class="fld">
+          <label>Énergie sèche-serviette</label>
+          <select id="ssEnergy">
+            <option value="eau">Eau chaude</option>
+            <option value="elec">Électrique</option>
+            <option value="mix">Mixte (eau + élec)</option>
+          </select>
+          <span class="hint">Choix du projet : filtre les modèles disponibles</span>
+        </div>
+      </div>
+
+      <div class="note" style="margin-top:6px">
+        La <b>température ambiante</b> (consigne, colonne Ti) et la <b>puissance requise</b> (colonne <b>Total</b> des déperditions
+        Pléiades, relance incluse) sont lues depuis l'export Pléiades et <b>ne sont pas modifiables ici</b>.
+        Pour les changer, ajustez le calcul dans Pléiades puis ré-importez le fichier .slk.
+      </div>
+
+      <div class="live" id="liveBox"></div>
+
+      <div class="toolbar noprint" style="margin-top:14px">
+        <button class="btn" onclick="recalcAll()">Recalculer tout en auto</button>
+        <button class="btn sec" onclick="exportCSV()">Exporter le bordereau (CSV)</button>
+        <button class="btn sec" onclick="window.print()">Imprimer / PDF</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== 2. SYNTHESE ===================== -->
+  <div class="panel" data-view="dim">
+    <h2 onclick="toggle(this)">2. Synthèse du projet <span class="chev">v</span></h2>
+    <div class="body">
+      <div class="synth" id="synth"></div>
+      <div style="margin-top:16px">
+        <b>Bordereau des radiateurs (quantitatif par modèle)</b>
+        <div class="tablewrap" style="max-height:none;margin-top:8px">
+          <table id="bordereau" class="kt"></table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== 3. TABLEAU PIECES ===================== -->
+  <div class="panel" data-view="dim">
+    <h2 onclick="toggle(this)">3. Sélection pièce par pièce <span class="chev">v</span></h2>
+    <div class="body">
+      <div class="note noprint" style="margin-top:0">
+        Ti et P requise proviennent de Pléiades (non modifiables). Colonnes ajustables :
+        <b>Nb</b>, <b>Type</b>, <b>Hauteur</b>, <b>Longueur</b>.
+        Bouton <b>A</b> = revenir à la sélection automatique. Couverture verte = dans la tolérance,
+        rouge = insuffisant, orange = au-delà de la tolérance maxi.
+      </div>
+      <div class="tablewrap">
+        <table id="tbl"></table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== 4. CATALOGUE ===================== -->
+  <div class="panel" data-view="dim">
+    <h2 onclick="toggle(this,true)">4. Catalogue du modèle (éditable) et méthode <span class="chev">&gt;</span></h2>
+    <div class="body" style="display:none">
+      <p class="note" style="margin-top:0">
+        Puissances à <b>DT50</b> (75/65/20 °C selon EN 442), en <b>W/m</b> (watts par mètre), et exposant <b>n</b> (Pente)
+        par type et hauteur, issues du <b>tarif Finimetal</b> (données constructeur, non modifiables).
+      </p>
+      <div class="tablewrap" style="max-height:none">
+        <table id="catTbl" class="kt"></table>
+      </div>
+      <details class="meth" style="margin-top:16px">
+        <summary>Méthode de calcul (à lire)</summary>
+        <p><b>Puissance requise</b> par pièce = colonne "Total" des déperditions Pléiades (base + relance), ou vos valeurs saisies.</p>
+        <p><b>Écart de température</b> pour la consigne réelle de chaque pièce, en moyenne arithmétique
+        (convention Finimetal) : <code>DT = (Te + Ts)/2 - Ti</code>.</p>
+        <p><b>Facteur de correction</b> vs catalogue DT50 : <code>f = (DT / 50) ^ n</code> (n = Pente, selon type et hauteur).
+        Cette méthode reproduit exactement les puissances du tarif Finimetal (vérifié au watt).</p>
+        <p><b>Puissance émise</b> = W/m x longueur(m) x f. La sélection auto retient la plus petite longueur (de la gamme
+        du modèle) couvrant la puissance requise majorée de la tolérance mini, en privilégiant le type le plus fin.</p>
+        <p style="color:var(--muted)">Les modèles Compact, Standard et Intégré partagent le même corps de chauffe
+        (11K/21K/22K/33K "avec ailettes") : leurs puissances sont identiques, seules la finition et la connexion diffèrent.</p>
+      </details>
+    </div>
+  </div>
+
+  <p class="note">Outil d'aide au prédimensionnement. Les références définitives sont à valider sur le configurateur Finimetal en vigueur.</p>
+</div>
+
+<script>
+/* ============================ CATALOGUE FINIMETAL (tarif 04/2021) ============================ */
+const TYPE_ORDER = ["11","21","22","33"];
+const CPT_HEIGHTS = [300,400,500,600,750,900];
+const CPT_LENGTHS = [400,520,600,720,800,920,1000,1120,1200,1320,1400,1600,1800,2000,2200,2400,2600,2800,3000];
+const CPT_MAXLEN  = {"11":3000,"21":3000,"22":3000,"33":2600};
+const CPT_WM = {  // W/m a DT50 (colonne L1000 du tarif), hauteurs 300..900
+  "11":[565,708,843,939,1128,1292], "21":[838,1047,1227,1357,1633,1864],
+  "22":[1095,1357,1543,1713,2049,2296], "33":[1561,1936,2228,2453,2847,3221] };
+const CPT_N = {   // Pente (exposant n)
+  "11":[1.3298,1.3420,1.3299,1.3193,1.3337,1.3318], "21":[1.3270,1.3343,1.3225,1.3102,1.3263,1.3207],
+  "22":[1.3081,1.3281,1.3220,1.3371,1.3328,1.3487], "33":[1.3308,1.3571,1.3509,1.3328,1.3500,1.3544] };
+function mkModel(name,code){ return {name,code,types:["11","21","22","33"],heights:CPT_HEIGHTS.slice(),lengths:CPT_LENGTHS.slice(),
+  maxLen:Object.assign({},CPT_MAXLEN), Wm:JSON.parse(JSON.stringify(CPT_WM)), n:JSON.parse(JSON.stringify(CPT_N))}; }
+// Compact / Standard / Integre : meme corps de chauffe "avec ailettes" -> puissances identiques (verifie).
+// Catalogue constant (donnees fabricant, non editable).
+const MODELS = {
+  compact:  mkModel("Reggane 3010 Compact","K"),
+  standard: mkModel("Reggane 3010 Standard","S"),
+  integre:  mkModel("Reggane 3010 Intégré","I"),
+  // Maternelle : un seul type (32KV), face avant non chauffee, hauteurs 400/600/750 (tarif Finimetal)
+  maternelle: {name:"Reggane 3010 Maternelle", code:"KV", types:["32"],
+    heights:[400,600,750], lengths:[400,600,720,800,920,1000,1120,1200,1320,1400,1600,1800,2000,2200],
+    maxLen:{"32":2200}, Wm:{"32":[1366,1742,2081]}, n:{"32":[1.326,1.319,1.375]}}
+};
+function mTypes(S){ return mdl(S).types || TYPE_ORDER; }
+
+/* ============================ ETAT GLOBAL ============================ */
+let ROOMS   = [];        // {id, bat, apt, piece, Ti, surf, dep, total, emitter?}
+let PROJECT_NAME = "";
+let overrides = {};      // { roomId : {type,height,length,N,ss} }
+let fileHandle = null;
+let ROOM_SEQ = 1;
+function nextId(){ return ROOM_SEQ++; }
+// Assure id + bat pour chaque piece ; ROOM_SEQ au-dela du max existant.
+function normalizeRooms(rooms, bat){
+  let mx=0; rooms.forEach(r=>{ if(typeof r.id==='number' && r.id>mx) mx=r.id; });
+  if(mx>=ROOM_SEQ) ROOM_SEQ=mx+1;
+  rooms.forEach(r=>{ if(typeof r.id!=='number') r.id=nextId(); if(bat!=null && r.bat==null) r.bat=bat; });
+  return rooms;
+}
+
+const $ = id => document.getElementById(id);
+const nf  = new Intl.NumberFormat('fr-FR',{maximumFractionDigits:0});
+const nf1 = new Intl.NumberFormat('fr-FR',{maximumFractionDigits:1});
+const pad4 = n => String(n).padStart(4,'0');
+
+/* ============================ LECTURE PARAMETRES ============================ */
+function readSettings(){
+  return {
+    model: $('model').value || 'compact',
+    allowTypes: [...document.querySelectorAll('#allowTypes input:checked')].map(x=>x.value),
+    Hmin:+$('hMin').value, Hmax:+$('hMax').value,
+    Lmin:+$('lMin').value, Lmax:+$('lMax').value,
+    Te:+$('Te').value, Ts:+$('Ts').value,
+    tolMin:+$('tolMin').value||0, tolMax:+$('tolMax').value||0,
+    seuil2:+$('seuil2').value||0,
+    criterion: $('criterion').value,
+    ssModel: $('ssModel').value || 'tahiti',
+    ssEnergy: $('ssEnergy').value || 'eau'
+  };
+}
+
+/* ============================ PHYSIQUE (methode Finimetal : moyenne arithmetique) ============================ */
+function mdl(S){ return MODELS[S.model] || MODELS.compact; }
+function mHeights(S){ return mdl(S).heights; }
+function mLengths(S){ return mdl(S).lengths; }
+function idxH(S,h){ return mdl(S).heights.indexOf(+h); }
+function WmOf(S,type,h){ const i=idxH(S,h); return i<0?NaN:mdl(S).Wm[type][i]; }
+function nOf(S,type,h){ const i=idxH(S,h); return i<0?1.3:mdl(S).n[type][i]; }
+function dtOf(Te,Ts,Ti){ return (Te+Ts)/2 - Ti; }
+function factorOf(S,type,h,Ti){ const dt=dtOf(S.Te,S.Ts,Ti);
+  if(!(dt>0)) return {f:NaN,dt}; return {f:Math.pow(dt/50,nOf(S,type,h)),dt}; }
+function emitOf(S,type,h,len,Ti){ const {f}=factorOf(S,type,h,Ti); const wm=WmOf(S,type,h);
+  if(!(f>0)||!(wm>0)) return 0; return wm*(len/1000)*f; }
+function typeRank(S,t){ return mTypes(S).indexOf(t); }
+function lenMax(S,type){ const m=mdl(S).maxLen||{}; return m[type]||3000; }
+function lengthsFor(S,type,h){ return mLengths(S).filter(l=>l>=S.Lmin && l<=S.Lmax && l<=lenMax(S,type)); }
+function allLengthsFor(S,type){ return mLengths(S).filter(l=>l<=lenMax(S,type)); }
+
+function fitLength(S,type,h,q,Ti){
+  const lens=lengthsFor(S,type,h); let last=null;
+  for(const len of lens){ const e=emitOf(S,type,h,len,Ti); last={length:len,emitted:e}; if(e>=q) return {length:len,emitted:e,ok:true}; }
+  return last?{...last,ok:false}:null;
+}
+function betterCand(S,a,b,crit){
+  if(!b) return true;
+  const tr=c=>typeRank(S,c.type);
+  const key=c=> crit==='compact'? [c.length,tr(c),c.height]
+              : crit==='lowh'   ? [c.height,tr(c),c.length]
+              :                    [tr(c),c.length,c.height];
+  const ka=key(a),kb=key(b);
+  for(let i=0;i<ka.length;i++){ if(ka[i]!==kb[i]) return ka[i]<kb[i]; }
+  return false;
+}
+function candTypes(S){ const types=mTypes(S); const a=S.allowTypes&&S.allowTypes.length? S.allowTypes:types.slice();
+  const r=types.filter(t=>a.includes(t)); return r.length? r : types.slice(); }
+function candHeights(S){ let h=mHeights(S).filter(x=>x>=S.Hmin && x<=S.Hmax);
+  if(!h.length) h=mHeights(S).slice(); return h.slice().sort((a,b)=>a-b); }
+function baseN(S,surf){ return (S.seuil2>0 && surf>S.seuil2)?2:1; }
+
+function autoSelect(S,Q,Ti,surf){
+  const types=candTypes(S), heights=candHeights(S);
+  const N0=baseN(S,surf), qmin=Q*(1+S.tolMin/100);
+  for(let N=N0;N<=Math.max(N0,4);N++){
+    const q=qmin/N; let best=null;
+    for(const t of types) for(const h of heights){
+      const r=fitLength(S,t,h,q,Ti);
+      if(r&&r.ok){ const cand={type:t,height:h,length:r.length,unit:r.emitted,N};
+        if(betterCand(S,cand,best,S.criterion)) best=cand; }
+    }
+    if(best) return best;
+  }
+  const t=types[types.length-1]||"33", h=heights[heights.length-1];
+  const r=fitLength(S,t,h,qmin/N0,Ti) || {length:(lengthsFor(S,t,h).slice(-1)[0]||S.Lmax)};
+  return {type:t,height:h,length:r.length,unit:emitOf(S,t,h,r.length,Ti),N:N0,ok:false};
+}
+
+// Overrides indexes par ID STABLE de piece (pas l'index de tableau) -> suppression/renommage surs.
+function ov(id,k){ return overrides[id]? overrides[id][k] : undefined; }
+// Ti et P requise viennent UNIQUEMENT de Pleiades (non editables dans l'outil).
+function reqOf(S,r){ return r.total||r.dep||0; }
+function tiOf(r){ return r.Ti; }
+
+function effOf(S,r){
+  const Ti=tiOf(r), Q=reqOf(S,r);
+  const auto=autoSelect(S,Q,Ti,r.surf);
+  const o=overrides[r.id]||{};
+  const type=o.type??auto.type;
+  const height=o.height??auto.height;
+  const N=o.N??auto.N;
+  let length;
+  if(o.length) length=o.length;
+  else { const r2=fitLength(S,type,height,Q*(1+S.tolMin/100)/N,Ti); length=r2?r2.length:(lengthsFor(S,type,height).slice(-1)[0]||S.Lmax); }
+  const unit=emitOf(S,type,height,length,Ti);
+  return {Ti,Q,type,height,length,N,unit,total:unit*N,manual:Object.keys(o).length>0};
+}
+function designation(S,type,h,len){ const m=mdl(S); return `${m.name} ${type}${m.code}${h} ${pad4(len)}`; }
+
+/* ============================ SECHE-SERVIETTES (catalogue Finimetal) ============================ */
+// Eau/Mixte : puissance NF EN442 a DT50 + Pente (n). Electrique : puissance resistance (W).
+const TOWELS = {
+  tahiti:{name:"Tahiti", eau:[{t:11,w:500,h:547,p:257,n:1.226},{t:17,w:500,h:862,p:417,n:1.234},{t:24,w:500,h:1222,p:576,n:1.244},{t:24,w:600,h:1222,p:676,n:1.28},{t:24,w:750,h:1222,p:826,n:1.292},{t:30,w:500,h:1537,p:718,n:1.279},{t:30,w:600,h:1537,p:842,n:1.246},{t:30,w:750,h:1537,p:1030,n:1.239},{t:36,w:500,h:1807,p:866,n:1.26},{t:36,w:600,h:1807,p:1014,n:1.25},{t:36,w:750,h:1807,p:1237,n:1.24}], elec:[{t:11,w:500,h:638,pw:300},{t:17,w:500,h:908,pw:500},{t:24,w:500,h:1313,pw:750},{t:30,w:600,h:1628,pw:1000},{t:30,w:750,h:1628,pw:1250},{t:36,w:500,h:1898,pw:1000},{t:36,w:600,h:1898,pw:1250},{t:36,w:750,h:1898,pw:1500}]},
+  tahiti_family:{name:"Tahiti Family", eau:[{t:21,w:500,h:1222,p:528,n:1.255},{t:21,w:600,h:1222,p:580,n:1.244},{t:30,w:500,h:1537,p:689,n:1.252},{t:30,w:600,h:1537,p:758,n:1.241}]},
+  tahiti_double:{name:"Tahiti Double", eau:[{t:15,w:450,h:862,p:630,n:1.199},{t:21,w:450,h:1222,p:856,n:1.227}]},
+  tahiti_rc:{name:"Tahiti Raccord Central", eau:[{t:11,w:500,h:547,p:266,n:1.226},{t:17,w:500,h:862,p:397,n:1.234},{t:24,w:500,h:1222,p:552,n:1.244},{t:30,w:500,h:1537,p:718,n:1.252},{t:30,w:600,h:1537,p:804,n:1.246},{t:30,w:750,h:1537,p:976,n:1.239},{t:36,w:500,h:1807,p:830,n:1.26},{t:36,w:600,h:1807,p:962,n:1.25},{t:36,w:750,h:1807,p:1161,n:1.24}], mix:[{t:17,w:500,h:949,p:397,n:1.234},{t:24,w:500,h:1309,p:552,n:1.244},{t:30,w:600,h:1624,p:804,n:1.246},{t:30,w:750,h:1624,p:976,n:1.239}]},
+  tahiti_surf:{name:"Tahiti Surf", elec:[{t:11,w:500,h:634,pw:300},{t:17,w:500,h:949,pw:500},{t:24,w:500,h:1309,pw:750},{t:30,w:600,h:1624,pw:1000},{t:30,w:750,h:1624,pw:1250},{t:36,w:500,h:1894,pw:1000},{t:36,w:600,h:1894,pw:1250},{t:36,w:750,h:1894,pw:1500}]},
+  tahiti_surf_rc:{name:"Tahiti Surf Raccord Central", eau:[{t:11,w:500,h:547,p:266,n:1.226},{t:17,w:500,h:862,p:397,n:1.234},{t:24,w:500,h:1222,p:552,n:1.244},{t:24,w:600,h:1222,p:647,n:1.241},{t:24,w:750,h:1222,p:790,n:1.239},{t:30,w:500,h:1537,p:689,n:1.252},{t:30,w:600,h:1537,p:804,n:1.246},{t:30,w:750,h:1537,p:976,n:1.239},{t:36,w:500,h:1807,p:830,n:1.26},{t:36,w:600,h:1807,p:962,n:1.25}], mix:[{t:17,w:500,h:949,p:397,n:1.234},{t:24,w:500,h:1309,p:552,n:1.244},{t:30,w:600,h:1624,p:804,n:1.246},{t:30,w:750,h:1624,p:976,n:1.239}]},
+  tahiti_surf_chrome:{name:"Tahiti Surf Chrome", eau:[{t:24,w:500,h:1222,p:395,n:1.275},{t:30,w:600,h:1537,p:585,n:1.291}], mix:[{t:24,w:500,h:1342,p:395,n:1.275},{t:30,w:600,h:1657,p:585,n:1.291}], elec:[{t:24,w:500,h:1342,pw:500},{t:30,w:600,h:1657,pw:750}]},
+  novella:{name:"Novella Bains", eau:[{t:10,w:500,h:700,p:358,n:1.227},{t:13,w:400,h:912,p:393,n:1.249},{t:13,w:500,h:912,p:463,n:1.244},{t:19,w:400,h:1336,p:568,n:1.237},{t:19,w:500,h:1336,p:668,n:1.232},{t:22,w:500,h:1548,p:780,n:1.24},{t:25,w:600,h:1760,p:1015,n:1.23},{t:28,w:600,h:1972,p:1137,n:1.24}], mix:[{t:13,w:400,h:1032,p:393,n:1.249},{t:13,w:500,h:1032,p:463,n:1.244},{t:19,w:400,h:1456,p:568,n:1.237},{t:19,w:500,h:1456,p:668,n:1.232},{t:22,w:500,h:1668,p:780,n:1.24},{t:25,w:600,h:1880,p:1015,n:1.23},{t:28,w:600,h:2092,p:1137,n:1.24}], elec:[{t:13,w:400,h:1032,pw:400},{t:13,w:500,h:1032,pw:500},{t:19,w:400,h:1456,pw:600},{t:19,w:500,h:1456,pw:750},{t:22,w:500,h:1668,pw:1000}]},
+  arborescence:{name:"Arborescence", eau:[{t:12,w:450,h:1130,p:528,n:1.246},{t:12,w:600,h:1130,p:706,n:1.261},{t:15,w:600,h:1430,p:855,n:1.272},{t:18,w:600,h:1730,p:1008,n:1.284}], mix:[{t:12,w:450,h:1250,p:528,n:1.246},{t:12,w:550,h:1250,p:528,n:1.246},{t:15,w:600,h:1550,p:855,n:1.272},{t:18,w:600,h:1850,p:1008,n:1.284}], elec:[{t:12,w:450,h:1250,pw:500},{t:12,w:550,h:1250,pw:500},{t:15,w:600,h:1550,pw:750},{t:18,w:600,h:1850,pw:1000}]},
+  arborescence_smart:{name:"Arborescence Smart", mix:[{t:16,w:600,h:1477,p:796,n:1.26},{t:19,w:600,h:1777,p:934,n:1.27}]},
+  sanaga:{name:"Sanaga", eau:[{t:8,w:600,h:1136,p:777,n:1.22},{t:12,w:600,h:1712,p:1167,n:1.23}], mix:[{t:8,w:600,h:1246,p:777,n:1.22},{t:12,w:600,h:1822,p:1167,n:1.23}], elec:[{t:8,w:600,h:1246,pw:750},{t:12,w:600,h:1822,pw:1000}]},
+  lemo:{name:"Lemo", eau:[{t:12,w:600,h:1224,p:607,n:1.222},{t:18,w:600,h:1812,p:870,n:1.229}]},
+  bawa_double:{name:"Bawa Double", eau:[{t:28,w:500,h:1194,p:885,n:1.265},{t:28,w:600,h:1194,p:1061,n:1.251},{t:40,w:500,h:1754,p:1222,n:1.274},{t:40,w:600,h:1754,p:1466,n:1.258},{t:40,w:750,h:1754,p:1831,n:1.233}]},
+  chorus_bains:{name:"Chorus Bains", elec:[{t:6,w:400,h:725,pw:300},{t:10,w:500,h:1025,pw:500},{t:10,w:525,h:1025,pw:500},{t:13,w:400,h:1325,pw:500},{t:13,w:500,h:1325,pw:750},{t:13,w:525,h:1325,pw:750},{t:18,w:500,h:1775,pw:1000},{t:18,w:525,h:1775,pw:1000},{t:19,w:600,h:1850,pw:1250}]},
+  banga:{name:"Banga", eau:[{t:15,w:500,h:862,p:374,n:1.276},{t:21,w:500,h:1222,p:528,n:1.265},{t:26,w:600,h:1537,p:758,n:1.244},{t:30,w:500,h:1537,p:689,n:1.252},{t:32,w:600,h:1807,p:921,n:1.23},{t:36,w:750,h:1807,p:1183,n:1.24}], elec:[{t:21,w:500,h:1298,pw:500},{t:26,w:500,h:1613,pw:750},{t:32,w:600,h:1886,pw:1000},{t:36,w:600,h:1883,pw:1250}]},
+  banga_cintre:{name:"Banga Cintre", elec:[{t:21,w:500,h:1298,pw:500},{t:26,w:500,h:1613,pw:750},{t:32,w:600,h:1883,pw:1000},{t:36,w:600,h:1883,pw:1250}]}
+};
+const SS_LABEL = {eau:'Eau chaude', elec:'Électrique', mix:'Mixte'};
+const SS_ORDER = ['eau','mix','elec'];
+function isBath(r){ return /salle\s*de\s*bain|salle\s*d['\s]?eau|\bsdb\b|douche/i.test(r.piece||''); }
+// Emetteur : override par piece (r.emitter = 'panneau'|'ss') sinon detection auto sur le nom.
+function isTowel(r){ return r.emitter ? r.emitter==='ss' : isBath(r); }
+function ssKey(S){ return TOWELS[S.ssModel]? S.ssModel : Object.keys(TOWELS)[0]; }
+function towelData(S){ const m=TOWELS[ssKey(S)]; let en=S.ssEnergy;
+  if(!m[en]||!m[en].length) en = SS_ORDER.find(e=>m[e]&&m[e].length)||'eau';
+  return {model:m, energy:en, items:m[en]||[]}; }
+function towelEmit(S,it,Ti,energy){ return energy==='elec'? it.pw : it.p*Math.pow(dtOf(S.Te,S.Ts,Ti)/50, it.n); }
+function towelAuto(S,Q,Ti){
+  const d=towelData(S), qmin=Q*(1+S.tolMin/100);
+  let best=-1,be=Infinity;
+  d.items.forEach((it,idx)=>{ const e=towelEmit(S,it,Ti,d.energy); if(e>=qmin && e<be){be=e;best=idx;} });
+  if(best<0){ let mx=0,me=-1; d.items.forEach((it,idx)=>{const e=towelEmit(S,it,Ti,d.energy); if(e>me){me=e;mx=idx;}}); return {idx:mx,ok:false}; }
+  return {idx:best,ok:true};
+}
+function effTowel(S,r){
+  const Ti=tiOf(r), Q=reqOf(S,r), d=towelData(S), o=overrides[r.id]||{};
+  const idx=(o.ss!=null && d.items[o.ss])? o.ss : towelAuto(S,Q,Ti).idx;
+  const N=o.N??1, it=d.items[idx]||d.items[0], unit= it? towelEmit(S,it,Ti,d.energy):0;
+  return {Ti,Q,idx,m:it,energy:d.energy,N,unit,total:unit*N,manual:Object.keys(o).length>0,bath:true};
+}
+function eff(S,r){ return isTowel(r) ? effTowel(S,r) : effOf(S,r); }
+function towelDesig(S,it,energy){ return `${towelData(S).model.name} ${SS_LABEL[energy]||''} - ${it.t} tubes ${it.h}x${it.w}`+
+  (energy==='elec'?` - ${it.pw} W`:''); }
+function selTowel(i,e,S){ const d=towelData(S); let o='';
+  d.items.forEach((it,idx)=>o+=`<option value="${idx}" ${idx===e.idx?'selected':''}>${it.t}T ${it.h}x${it.w}${d.energy==='elec'?' ('+it.pw+'W)':''}</option>`);
+  return `<select class="cell" style="max-width:150px" onchange="setOv(${i},'ss',+this.value)">${o}</select>`; }
+
+/* ============================ RENDU ============================ */
+function render(){
+  const S=readSettings(); persist(); renderLive(S);
+  let html='<thead><tr>'+
+    '<th class="l">Logement</th><th class="l">Pièce</th><th>Émetteur</th><th>Ti<br>°C</th><th>Surf.<br>m²</th>'+
+    '<th>P requise<br>W</th><th>Nb</th><th>DT<br>K</th>'+
+    '<th>Type</th><th>Haut.<br>mm</th><th>Long.<br>mm</th>'+
+    '<th>P émise<br>W</th><th>Couv.<br>%</th><th class="noprint"></th></tr></thead><tbody>';
+  if(!ROOMS.length){
+    html+='<tr><td class="empty" colspan="14">Aucun projet chargé. Importez un fichier .slk (déperditions Pléiades) '+
+      'ou ouvrez un projet .json.</td></tr></tbody>';
+    $('tbl').innerHTML=html; renderSynth(S); renderBordereau(S); renderProjInfo(); renderRoomMgmt(); return;
+  }
+  let curApt=null, aptReq=0, aptEmit=0;
+  const flush=()=>{ if(curApt!==null){
+    html+=`<tr class="sub"><td colspan="5" class="l">Sous-total ${esc(curApt)}</td>`+
+          `<td>${nf.format(Math.round(aptReq))}</td><td colspan="5"></td>`+
+          `<td>${nf.format(Math.round(aptEmit))}</td><td></td><td class="noprint"></td></tr>`; } };
+  const multiBat = new Set(ROOMS.map(r=>r.bat||'')).size>1;
+  ROOMS.forEach((r)=>{
+    const aptLabel = (multiBat && r.bat? r.bat+' - ' : '')+(r.apt||'(sans logement)');
+    if(aptLabel!==curApt){ flush(); curApt=aptLabel; aptReq=0;aptEmit=0;
+      html+=`<tr class="apt"><td colspan="14">${esc(aptLabel)}</td></tr>`; }
+    const bath=isTowel(r);
+    const e=eff(S,r);
+    const dt = (bath && e.energy==='elec') ? NaN : dtOf(S.Te,S.Ts,e.Ti);
+    const qmin=e.Q*(1+S.tolMin/100), qmax=e.Q*(1+S.tolMax/100);
+    const cov=e.Q>0? e.total/e.Q*100:0;
+    let cls='cov-ok',warn='';
+    if(e.total<qmin-0.5){ cls='cov-ko'; warn=' !'; } else if(e.total>qmax+0.5){ cls='cov-hi'; }
+    aptReq+=e.Q; aptEmit+=e.total;
+    const id=r.id;
+    const midCells = bath
+      ? `<td title="Seche-serviette">S-S</td><td>${e.m?e.m.h:'-'}</td><td>${selTowel(id,e,S)}</td>`
+      : `<td>${selType(id,e,S)}</td><td>${selHeight(id,e,S)}</td><td>${selLen(id,e,S)}</td>`;
+    html+=`<tr>`+
+      `<td class="l">${esc(r.apt)}</td><td class="l">${esc(r.piece)}</td>`+
+      `<td>${bath?'<span class="emlab em-ss">SS</span>':'<span class="emlab em-rad">RAD</span>'}</td>`+
+      `<td>${e.Ti}</td>`+
+      `<td>${nf1.format(r.surf||0)}</td>`+
+      `<td><b>${nf.format(Math.round(e.Q))}</b></td>`+
+      `<td>${selN(id,e)}</td>`+
+      `<td>${isFinite(dt)&&dt>0?nf1.format(dt):'-'}</td>`+
+      midCells+
+      `<td class="rad">${nf.format(Math.round(e.total))}</td>`+
+      `<td class="${cls}">${nf.format(Math.round(cov))}${warn}</td>`+
+      `<td class="noprint">${e.manual?`<button class="btn sec mini" onclick="clearOv(${id})">A</button>`:''}</td>`+
+      `</tr>`;
+  });
+  flush(); html+='</tbody>';
+  $('tbl').innerHTML=html;
+  renderSynth(S); renderBordereau(S); renderProjInfo(); renderRoomMgmt();
+}
+function attr(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
+let rmSort={col:'',dir:1};
+function rmSortBy(col){ if(rmSort.col===col) rmSort.dir=-rmSort.dir; else { rmSort.col=col; rmSort.dir=1; } renderRoomMgmt(); }
+function rmReset(){ $('rmSearch').value=''; $('rmBat').value=''; $('rmEm').value=''; rmSort={col:'',dir:1}; renderRoomMgmt(); }
+function renderRoomMgmt(){
+  const S=readSettings();
+  const tc=$('tabCountPieces'); if(tc){ tc.textContent=ROOMS.length||''; tc.style.display=ROOMS.length?'':'none'; }
+  // Options de filtre par batiment (on preserve la selection courante)
+  const bats=[...new Set(ROOMS.map(r=>r.bat||'').filter(Boolean))].sort((a,b)=>a.localeCompare(b));
+  const selBat=$('rmBat'), curBat=selBat.value;
+  selBat.innerHTML='<option value="">Tous les bâtiments</option>'+bats.map(b=>`<option value="${attr(b)}">${esc(b)}</option>`).join('');
+  selBat.value = bats.includes(curBat)? curBat : '';
+  const q=(($('rmSearch').value)||'').trim().toLowerCase(), fbat=selBat.value, fem=$('rmEm').value;
+  // Filtrage
+  let disp=ROOMS.filter(r=>{
+    if(fbat && (r.bat||'')!==fbat) return false;
+    const tw=isTowel(r);
+    if(fem==='ss' && !tw) return false;
+    if(fem==='rad' && tw) return false;
+    if(q){ const hay=`${r.bat||''} ${r.apt||''} ${r.piece||''}`.toLowerCase(); if(hay.indexOf(q)<0) return false; }
+    return true;
+  });
+  // Tri
+  if(rmSort.col){ const c=rmSort.col, d=rmSort.dir;
+    const key=r=> c==='Ti'?(+r.Ti||0) : c==='surf'?(+r.surf||0) : c==='req'?reqOf(S,r) : c==='em'?(isTowel(r)?1:0) : String(r[c]||'').toLowerCase();
+    disp=disp.slice().sort((a,b)=>{ const ka=key(a),kb=key(b); if(ka<kb) return -d; if(ka>kb) return d; return a.id-b.id; });
+  }
+  const cnt=$('rmCount'); if(cnt) cnt.textContent = ROOMS.length? (disp.length===ROOMS.length? `${ROOMS.length} pièce(s)` : `${disp.length} / ${ROOMS.length} pièce(s)`) : '';
+  const th=(label,col,cls='')=>`<th class="${cls}${cls?' ':''}sortable${rmSort.col===col?(rmSort.dir>0?' sort-asc':' sort-desc'):''}" onclick="rmSortBy('${col}')">${label}</th>`;
+  let html='<thead><tr>'+th('Bâtiment','bat','l')+th('Logement','apt','l')+th('Pièce','piece','l')+
+    th('Ti °C','Ti')+th('Surf. m²','surf')+th('P requise W','req')+th('Émetteur','em')+'<th class="noprint"></th></tr></thead><tbody>';
+  if(!ROOMS.length){ html+='<tr><td class="empty" colspan="8">Aucune pièce. Importez un ou plusieurs fichiers .slk.</td></tr></tbody>'; $('roomTbl').innerHTML=html; return; }
+  if(!disp.length){ html+='<tr><td class="empty" colspan="8">Aucune pièce ne correspond au filtre.</td></tr></tbody>'; $('roomTbl').innerHTML=html; return; }
+  disp.forEach(r=>{
+    const em=r.emitter||'auto', autoss=isBath(r);
+    html+='<tr>'+
+      `<td class="l">${esc(r.bat||'')}</td>`+
+      `<td class="l">${esc(r.apt||'')}</td>`+
+      `<td class="l"><input type="text" style="width:160px" value="${attr(r.piece)}" onchange="setPiece(${r.id},this.value)"></td>`+
+      `<td>${r.Ti}</td><td>${nf1.format(r.surf||0)}</td><td>${nf.format(reqOf(S,r))}</td>`+
+      `<td><span class="emlab ${isTowel(r)?'em-ss':'em-rad'}" style="margin-right:6px">${isTowel(r)?'SS':'RAD'}</span>`+
+      `<select class="cell" style="max-width:140px" onchange="setEmitter(${r.id},this.value)">`+
+        `<option value="auto" ${em==='auto'?'selected':''}>Auto (${autoss?'sèche-serv.':'radiateur'})</option>`+
+        `<option value="panneau" ${em==='panneau'?'selected':''}>Radiateur panneau</option>`+
+        `<option value="ss" ${em==='ss'?'selected':''}>Sèche-serviette</option>`+
+      `</select></td>`+
+      `<td class="noprint"><button class="btn sec mini" onclick="delRoom(${r.id})">Suppr.</button></td></tr>`;
+  });
+  $('roomTbl').innerHTML=html+'</tbody>';
+}
+function setPiece(id,v){ const r=ROOMS.find(x=>x.id===id); if(r){ r.piece=v; persist(); render(); } }
+function setEmitter(id,v){ const r=ROOMS.find(x=>x.id===id); if(!r) return;
+  if(v==='auto') delete r.emitter; else r.emitter=v; delete overrides[id]; persist(); render(); }
+function delRoom(id){ const r=ROOMS.find(x=>x.id===id); if(!r) return;
+  if(!confirm(`Supprimer la pièce "${r.piece}" (${r.apt||''}) ?`)) return;
+  ROOMS=ROOMS.filter(x=>x.id!==id); delete overrides[id]; persist(); render(); }
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+function selType(i,e,S){ let o=''; for(const t of mTypes(S)) o+=`<option value="${t}" ${t===e.type?'selected':''}>${t}</option>`;
+  return `<select class="cell" onchange="setOv(${i},'type',this.value)">${o}</select>`; }
+function selHeight(i,e,S){ let o=''; for(const h of mHeights(S)) o+=`<option value="${h}" ${h==e.height?'selected':''}>${h}</option>`;
+  return `<select class="cell" onchange="setOv(${i},'height',+this.value)">${o}</select>`; }
+function selLen(i,e,S){ const lens=allLengthsFor(S,e.type); let o='';
+  for(const l of lens) o+=`<option value="${l}" ${l===e.length?'selected':''}>${l}</option>`;
+  return `<select class="cell" onchange="setOv(${i},'length',+this.value)">${o}</select>`; }
+function selN(i,e){ let o=''; for(const n of [1,2,3,4]) o+=`<option value="${n}" ${n===e.N?'selected':''}>${n}</option>`;
+  return `<select class="cell" style="max-width:46px" onchange="setOv(${i},'N',+this.value)">${o}</select>`; }
+
+function renderLive(S){
+  const tis=[...new Set(ROOMS.map(r=>r.Ti))].sort((a,b)=>a-b);
+  const reg = (S.Te&&S.Ts)? `${S.Te}/${S.Ts} °C` : 'non saisi';
+  let parts=[`Régime : <b>${reg}</b> - <b>${esc(mdl(S).name)}</b>`];
+  if(S.Te&&S.Ts) tis.forEach(ti=>{ const dt=dtOf(S.Te,S.Ts,ti);
+    parts.push(`Local ${ti} °C : DT = <b>${dt>0?nf1.format(dt):'invalide'} K</b>`); });
+  else parts.push(`<span style="color:var(--ko)">Saisir la température aller/retour pour lancer le calcul.</span>`);
+  $('liveBox').innerHTML = parts.map(p=>`<div>${p}</div>`).join('');
+}
+function renderSynth(S){
+  let req=0,emit=0,N=0,ko=0,nSS=0;
+  ROOMS.forEach((r)=>{ const e=eff(S,r); req+=e.Q; emit+=e.total; N+=e.N; if(e.bath) nSS+=e.N;
+    if(e.total < e.Q*(1+S.tolMin/100)-0.5) ko++; });
+  const cov=req>0? emit/req*100:0;
+  $('synth').innerHTML=
+    card('Puissance requise', nf.format(Math.round(req)), 'W ('+nf1.format(req/1000)+' kW)')+
+    card('Puissance émise', nf.format(Math.round(emit)), (S.Te&&S.Ts)?('W au régime '+S.Te+'/'+S.Ts):'W')+
+    card('Couverture globale', ROOMS.length?nf1.format(cov):'-', '%')+
+    card('Nombre d\'émetteurs', N, `${N-nSS} panneaux + ${nSS} sèche-serviettes`)+
+    card('Pièces hors tolérance', ko, ko?'à revoir':'OK', ko?'var(--ko)':'var(--ok)');
+}
+function card(k,v,u,color){ return `<div class="card"><div class="k">${k}</div>`+
+  `<div class="v" ${color?`style="color:${color}"`:''}>${v}</div><div class="u">${u}</div></div>`; }
+function renderBordereau(S){
+  const pan={}, ss={};
+  ROOMS.forEach((r)=>{ const e=eff(S,r); if(e.bath && !e.m) return;
+    if(e.bath){ const k=`${e.energy}|${e.idx}`; if(!ss[k]) ss[k]={m:e.m,energy:e.energy,qty:0,unit:e.unit}; ss[k].qty+=e.N; }
+    else { const k=`${e.type}|${e.height}|${e.length}`;
+      if(!pan[k]) pan[k]={type:e.type,height:e.height,length:e.length,qty:0,unit:e.unit}; pan[k].qty+=e.N; } });
+  const prows=Object.values(pan).sort((a,b)=>typeRank(S,a.type)-typeRank(S,b.type)||a.height-b.height||a.length-b.length);
+  const srows=Object.values(ss).sort((a,b)=>a.m.h-b.m.h||a.m.w-b.m.w);
+  let html='<thead><tr><th>Nature</th><th>Hauteur (mm)</th><th>Larg./Long. (mm)</th>'+
+    '<th>P unit. émise (W)</th><th>Quantité</th><th>Code / désignation Finimetal</th></tr></thead><tbody>';
+  if(!prows.length && !srows.length){ html+='<tr><td class="empty" colspan="6">Aucun émetteur.</td></tr></tbody>'; $('bordereau').innerHTML=html; return; }
+  let tot=0;
+  prows.forEach(x=>{ tot+=x.qty;
+    html+=`<tr><td>Panneau ${x.type}${mdl(S).code}</td><td>${x.height}</td><td>${x.length}</td>`+
+      `<td>${nf.format(Math.round(x.unit))}</td><td><b>${x.qty}</b></td>`+
+      `<td class="l">${esc(designation(S,x.type,x.height,x.length))}</td></tr>`; });
+  srows.forEach(x=>{ tot+=x.qty;
+    html+=`<tr><td>Sèche-serviette</td><td>${x.m.h}</td><td>${x.m.w}</td>`+
+      `<td>${nf.format(Math.round(x.unit))}</td><td><b>${x.qty}</b></td>`+
+      `<td class="l">${esc(towelDesig(S,x.m,x.energy))}</td></tr>`; });
+  html+=`<tr class="sub"><td colspan="4" class="l">Total émetteurs</td><td><b>${tot}</b></td><td></td></tr></tbody>`;
+  $('bordereau').innerHTML=html;
+}
+
+/* ============================ CATALOGUE UI ============================ */
+function renderCatalog(){
+  const S=readSettings(); const m=mdl(S);
+  let html='<thead><tr><th>Type</th><th>Grandeur</th>';
+  m.heights.forEach(h=>html+=`<th>H ${h}</th>`); html+='</tr></thead><tbody>';
+  (m.types||TYPE_ORDER).forEach(t=>{
+    html+=`<tr><td rowspan="2"><b>${t}${m.code}</b></td><td class="l">W/m à DT50</td>`;
+    m.Wm[t].forEach(v=>html+=`<td>${v}</td>`);
+    html+='</tr><tr><td class="l">n (Pente)</td>';
+    m.n[t].forEach(v=>html+=`<td>${String(v).replace('.', ',')}</td>`);
+    html+='</tr>';
+  });
+  $('catTbl').innerHTML=html+'</tbody>';
+}
+
+/* ============================ INTERACTIONS ============================ */
+function setOv(id,k,v){ overrides[id]=overrides[id]||{}; overrides[id][k]=v;
+  if(k==='type'||k==='height'||k==='N') delete overrides[id].length; persist(); render(); }
+function clearOv(id){ delete overrides[id]; persist(); render(); }
+function recalcAll(){ overrides={}; persist(); render(); }
+function toggle(h){ const b=h.nextElementSibling; const open=b.style.display!=='none';
+  b.style.display=open?'none':''; h.querySelector('.chev').textContent=open?'>':'v'; }
+let CUR_VIEW='dim';
+function showView(v){
+  if(!['projet','pieces','dim'].includes(v)) v='dim';
+  CUR_VIEW=v;
+  document.querySelectorAll('.panel[data-view]').forEach(p=>{ p.style.display=(p.getAttribute('data-view')===v)?'':'none'; });
+  document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('active', b.getAttribute('data-view')===v));
+  try{ localStorage.setItem('finimetal_view', v); }catch(e){}
+}
+function clampTol(id){ let v=+$(id).value; if(isNaN(v))v=0; v=Math.max(-30,Math.min(30,v)); $(id).value=v; }
+
+/* ============================ SELECTS DYNAMIQUES ============================ */
+function populateModelSelect(){
+  $('model').innerHTML=Object.keys(MODELS).map(k=>`<option value="${k}">${esc(MODELS[k].name)}</option>`).join('');
+}
+function fillSel(id,arr,val,fallback){ $(id).innerHTML=arr.map(v=>`<option value="${v}">${v}</option>`).join('');
+  $(id).value = arr.includes(+val)? val : fallback; }
+function populateRangeSelects(hMin,hMax,lMin,lMax){
+  const S={model:$('model').value||'compact'};
+  const hs=mHeights(S), ls=mLengths(S);
+  fillSel('hMin',hs,hMin, hs[0]); fillSel('hMax',hs,hMax, hs.includes(600)?600:hs[hs.length-1]);
+  if(+$('hMin').value>+$('hMax').value) $('hMax').value=$('hMin').value;
+  fillSel('lMin',ls,lMin, ls[0]); fillSel('lMax',ls,lMax, ls.includes(2000)?2000:ls[ls.length-1]);
+  if(+$('lMin').value>+$('lMax').value) $('lMax').value=$('lMin').value;
+}
+function populateTypeChecks(keep){
+  const S={model:$('model').value||'compact'}; const types=mTypes(S);
+  $('allowTypes').innerHTML=types.map(t=>`<label class="chip"><input type="checkbox" value="${t}" ${(!keep||keep.includes(t))?'checked':''}> Type ${t}</label>`).join('');
+}
+// L'energie (choix projet) filtre la liste des modeles : on ne propose que les modeles
+// disposant d'une version dans l'energie choisie (eau / electrique / mixte).
+function populateSSModel(keep){
+  const en=$('ssEnergy').value||'eau';
+  const avail=Object.keys(TOWELS).filter(k=>TOWELS[k][en]&&TOWELS[k][en].length);
+  $('ssModel').innerHTML=avail.map(k=>`<option value="${k}">${esc(TOWELS[k].name)}</option>`).join('');
+  $('ssModel').value = (keep && avail.includes(keep)) ? keep : avail[0];
+}
+function onModelChange(){ const s=readSettings(); overrides={};
+  populateTypeChecks(); populateRangeSelects(s.Hmin,s.Hmax,s.Lmin,s.Lmax); renderCatalog(); render(); }
+
+/* ============================ EXPORT CSV ============================ */
+function exportCSV(){
+  const S=readSettings(); const sep=';';
+  let out='Projet;'+(PROJECT_NAME||'(sans nom)').replace(/;/g,',')+'\n';
+  out+=`Modèle;${mdl(S).name.replace(/;/g,',')};Régime;${S.Te}/${S.Ts} deg C;Tolérance;${S.tolMin}% à ${S.tolMax}%\n\n`;
+  out+=['Bâtiment','Logement','Pièce','Ti','Surface m²','P requise W','Nb','DT K','Nature','Hauteur mm','Larg/Long mm','P émise W','Couverture %','Code Finimetal'].join(sep)+'\n';
+  ROOMS.forEach((r)=>{ const e=eff(S,r);
+    const dt = (e.bath && e.energy==='elec')? NaN : dtOf(S.Te,S.Ts,e.Ti);
+    const cov=e.Q>0?e.total/e.Q*100:0;
+    const nature = e.bath? ('S-S '+(SS_LABEL[e.energy]||'')) : ('Panneau '+e.type+mdl(S).code);
+    const haut = e.bath? (e.m?e.m.h:'-') : e.height;
+    const larg = e.bath? (e.m?e.m.w:'-') : e.length;
+    const code = e.bath? (e.m?towelDesig(S,e.m,e.energy):'(aucun modele)') : designation(S,e.type,e.height,e.length);
+    out+=[r.bat||'',r.apt,r.piece,e.Ti,nf1.format(r.surf||0),Math.round(e.Q),e.N,(isFinite(dt)&&dt>0)?nf1.format(dt):'-',
+      nature,haut,larg,Math.round(e.total),Math.round(cov),code].join(sep)+'\n'; });
+  const blob=new Blob(['﻿'+out],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download='Bordereau_radiateurs_'+slug(PROJECT_NAME)+'.csv'; a.click();
+}
+function slug(s){ return (s||'projet').normalize('NFD').replace(/[̀-ͯ]/g,'')
+  .replace(/[^a-zA-Z0-9]+/g,'_').replace(/^_+|_+$/g,'').slice(0,60)||'projet'; }
+
+/* ============================ PERSISTENCE LOCALE (auto-save) ============================ */
+const LS='finimetal_selecteur_v5';
+function settingsToStore(){ const S=readSettings();
+  return {model:S.model,allowTypes:S.allowTypes,Hmin:$('hMin').value,Hmax:$('hMax').value,
+    Lmin:$('lMin').value,Lmax:$('lMax').value,Te:$('Te').value,Ts:$('Ts').value,
+    tolMin:$('tolMin').value,tolMax:$('tolMax').value,seuil2:$('seuil2').value,criterion:S.criterion,ssModel:S.ssModel,ssEnergy:S.ssEnergy}; }
+function applySettings(S){
+  if(!S){ populateTypeChecks(); populateRangeSelects(400,600,400,2000); populateSSModel(); return; }
+  if(S.model && MODELS[S.model]) $('model').value=S.model;
+  populateTypeChecks(S.allowTypes);
+  populateRangeSelects(S.Hmin!=null?S.Hmin:400, S.Hmax!=null?S.Hmax:600, S.Lmin!=null?S.Lmin:400, S.Lmax!=null?S.Lmax:2000);
+  if(S.Te!=null)$('Te').value=S.Te; if(S.Ts!=null)$('Ts').value=S.Ts;
+  if(S.tolMin!=null)$('tolMin').value=S.tolMin; if(S.tolMax!=null)$('tolMax').value=S.tolMax;
+  if(S.seuil2!=null)$('seuil2').value=S.seuil2;
+  if(S.criterion)$('criterion').value=S.criterion;
+  if(S.ssEnergy && SS_LABEL[S.ssEnergy])$('ssEnergy').value=S.ssEnergy;
+  populateSSModel(S.ssModel);
+}
+function persist(){ try{ localStorage.setItem(LS,JSON.stringify({
+    settings:settingsToStore(), current:{name:PROJECT_NAME,rooms:ROOMS,overrides} })); }catch(e){} }
+function loadStore(){ try{ return JSON.parse(localStorage.getItem(LS))||{}; }catch(e){ return {}; } }
+// Adopte des pieces + overrides : assure les IDs, et remappe les overrides d'anciens projets (indexes par position) vers les IDs.
+function adoptProject(rooms, ovIn){
+  const hadIds = rooms.length && rooms.every(r=>typeof r.id==='number');
+  normalizeRooms(rooms, null);
+  // Anciens projets sans batiment -> on renseigne le nom du projet pour ne jamais laisser vide.
+  rooms.forEach(r=>{ if(r.bat==null || r.bat==='') r.bat = PROJECT_NAME || 'Bâtiment 1'; });
+  let ov = ovIn||{};
+  if(!hadIds){ const remap={}; rooms.forEach((r,idx)=>{ if(ov[idx]) remap[r.id]=ov[idx]; }); ov=remap; }
+  return ov;
+}
+function restore(){
+  const d=loadStore();
+  populateModelSelect();
+  $('model').value = (d.settings && MODELS[d.settings.model]) ? d.settings.model : Object.keys(MODELS)[0];
+  if(d.current && Array.isArray(d.current.rooms)){
+    ROOMS=d.current.rooms; PROJECT_NAME=d.current.name||''; overrides=adoptProject(ROOMS, d.current.overrides); }
+  applySettings(d.settings);
+  $('projName').value=PROJECT_NAME;
+}
+
+/* ============================ PROJET JSON (1 projet = 1 fichier) ============================ */
+function projectData(){ return {app:'finimetal-selecteur-radiateurs',version:6,
+  name:PROJECT_NAME, rooms:ROOMS, overrides, settings:settingsToStore()}; }
+function loadProjectData(d){
+  if(!d || !Array.isArray(d.rooms)) throw new Error("fichier projet invalide (pas de pièces).");
+  ROOMS=d.rooms; PROJECT_NAME=d.name||'Projet'; overrides=adoptProject(ROOMS, d.overrides);
+  populateModelSelect(); applySettings(d.settings); $('projName').value=PROJECT_NAME;
+  renderCatalog(); persist(); render(); showView('dim');
+}
+async function saveProject(){
+  const json=JSON.stringify(projectData(),null,1);
+  try{
+    if(fileHandle && fileHandle.createWritable){
+      const w=await fileHandle.createWritable(); await w.write(json); await w.close();
+      msg(`Projet enregistré et synchronisé avec "${fileHandle.name}".`,'ok'); return; }
+    if(window.showSaveFilePicker){
+      fileHandle=await window.showSaveFilePicker({suggestedName:slug(PROJECT_NAME)+'.json',
+        types:[{description:'Projet radiateurs',accept:{'application/json':['.json']}}]});
+      const w=await fileHandle.createWritable(); await w.write(json); await w.close();
+      msg(`Projet enregistré dans "${fileHandle.name}" (synchronisation active).`,'ok'); return; }
+  }catch(e){ if(e.name==='AbortError') return; }
+  const blob=new Blob([json],{type:'application/json'}); const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob); a.download=slug(PROJECT_NAME)+'.json'; a.click();
+  msg('Projet téléchargé (.json).','ok');
+}
+async function openProject(){
+  if(window.showOpenFilePicker){
+    try{ const [h]=await window.showOpenFilePicker({types:[{description:'Projet radiateurs',accept:{'application/json':['.json']}}]});
+      fileHandle=h; const f=await h.getFile(); loadProjectData(JSON.parse(await f.text()));
+      msg(`Projet "${PROJECT_NAME}" ouvert et synchronisé avec "${h.name}".`,'ok');
+    }catch(e){ if(e.name!=='AbortError') msg("Ouverture impossible : "+e.message,'ko'); }
+    return; }
+  $('fileJson').click();
+}
+function handleJson(file){ if(!file) return;
+  file.text().then(txt=>{ try{ loadProjectData(JSON.parse(txt)); fileHandle=null;
+    msg(`Projet "${PROJECT_NAME}" chargé.`,'ok'); }catch(e){ msg("Fichier projet illisible : "+e.message,'ko'); } }); }
+function newProject(){ if(ROOMS.length && !confirm("Démarrer un nouveau projet vide ? Le projet courant non enregistré sera perdu.")) return;
+  ROOMS=[]; overrides={}; PROJECT_NAME=''; fileHandle=null; $('projName').value=''; $('Te').value=''; $('Ts').value='';
+  persist(); render(); msg("Nouveau projet vide.",'muted'); }
+
+/* ============================ INFO / ENTETE ============================ */
+function renderProjInfo(){ const S=readSettings(); let req=0; ROOMS.forEach((r)=>req+=reqOf(S,r));
+  $('projInfo').textContent= ROOMS.length? `${ROOMS.length} pièces - ${nf1.format(req/1000)} kW requis`+(fileHandle?` - lié à ${fileHandle.name}`:'') : 'Aucun projet chargé';
+  $('hdrSub').textContent= PROJECT_NAME || 'Dimensionnement sur régime unique à partir des déperditions Pléiades';
+  $('hdrBadge').textContent= ROOMS.length? `${ROOMS.length} pièces - régime ${S.Te||'?'}/${S.Ts||'?'} °C - ${mdl(S).name}` : 'Aucun projet chargé - importez un .slk ou ouvrez un .json'; }
+
+/* ============================ IMPORT SLK (SYLK Pléiades) ============================ */
+function cleanName(name,partie){ let n=String(name==null?'':name); partie=String(partie==null?'':partie).trim();
+  if(partie && n.indexOf(partie)===0) n=n.slice(partie.length);
+  n=n.replace(/^[\s\-]+/,'').replace(/_/g,' ').trim(); return n||String(name||''); }
+function toNum(v){ if(typeof v==='number')return v; if(v==null)return 0;
+  const x=parseFloat(String(v).replace(',','.')); return isNaN(x)?0:x; }
+function parseSLK(buf){
+  const text=new TextDecoder('windows-1252').decode(buf);
+  const lines=text.split(/\r?\n/); const grid={}; let cx=null,cy=null,maxY=0,maxX=0;
+  for(const ln of lines){
+    if(ln[0]!=='C' || ln[1]!==';') continue;
+    const fields=ln.split(';'); let x=null,y=null,val,hasK=false;
+    for(let i=1;i<fields.length;i++){ const f=fields[i]; if(!f) continue;
+      const tag=f[0], rest=f.slice(1);
+      if(tag==='X') x=parseInt(rest,10); else if(tag==='Y') y=parseInt(rest,10);
+      else if(tag==='K'){ hasK=true; let raw=fields.slice(i).join(';').slice(1).trim();
+        if(raw[0]==='"') val=raw.replace(/^"|"$/g,'').replace(/""/g,'"');
+        else { const num=parseFloat(raw); val=isNaN(num)?raw:num; } break; } }
+    if(x!=null)cx=x; if(y!=null)cy=y;
+    if(hasK && cx!=null && cy!=null){ grid[cy+'|'+cx]=val; if(cy>maxY)maxY=cy; if(cx>maxX)maxX=cx; } }
+  const get=(y,x)=>grid[y+'|'+x];
+  let hy=null;
+  for(let y=1;y<=maxY && hy===null;y++){ let hasP=false,hasC=false;
+    for(let x=1;x<=maxX;x++){ const v=get(y,x);
+      if(typeof v==='string'){ const t=v.trim(); if(/^pi[eè]ces?$/i.test(t))hasP=true; if(/consigne/i.test(t))hasC=true; } }
+    if(hasP&&hasC) hy=y; }
+  if(hy===null) throw new Error("tableau 'Bilan des déperditions par pièce' introuvable.");
+  const col={};
+  for(let x=1;x<=maxX;x++){ const v=get(hy,x); if(typeof v!=='string')continue; const t=v.trim();
+    if(/^partie$/i.test(t))col.partie=x; else if(/^pi[eè]ces?$/i.test(t))col.piece=x;
+    else if(/consigne/i.test(t))col.Ti=x; else if(/^surface/i.test(t))col.surf=x;
+    else if(/^d[eé]perditions$/i.test(t))col.dep=x; else if(/^total$/i.test(t))col.total=x; }
+  if(col.piece==null) throw new Error("colonne 'Pièce' introuvable.");
+  const rooms=[];
+  for(let y=hy+1;y<=maxY;y++){
+    const piece=get(y,col.piece), partie=col.partie?get(y,col.partie):'';
+    const eP=(piece==null||piece===''), eA=(partie==null||partie==='');
+    if(eP&&eA) break; if(eP) continue;
+    if(/^(bilan|total\b)/i.test(String(piece))) break;
+    const Ti=col.Ti?Math.round(toNum(get(y,col.Ti))):20; if(!(Ti>=5&&Ti<=40)) continue;
+    const surf=col.surf?Math.round(toNum(get(y,col.surf))*100)/100:0;
+    const dep=col.dep?Math.round(toNum(get(y,col.dep))):0;
+    const total=col.total?Math.round(toNum(get(y,col.total))):dep;
+    rooms.push({apt:String(partie||'').trim(),piece:cleanName(piece,partie),Ti,surf,dep,total:total||dep}); }
+  if(!rooms.length) throw new Error("aucune pièce exploitable trouvée.");
+  return rooms;
+}
+// Ajout CUMULATIF : les pieces d'un .slk (= un batiment) s'ajoutent au projet courant.
+function appendSlk(name,rooms){ normalizeRooms(rooms,name); ROOMS.push(...rooms);
+  if(!PROJECT_NAME) PROJECT_NAME=name; }
+function handleFiles(files){
+  files=[...(files||[])]; if(!files.length) return;
+  const jsonF=files.find(f=>/\.json$/i.test(f.name));
+  if(jsonF){ handleJson(jsonF); return; }                 // un projet .json remplace le projet courant
+  const slk=files.filter(f=>/\.slk$/i.test(f.name));
+  if(!slk.length){ msg("Format non reconnu : .slk (déperditions Pléiades) ou .json (projet).",'ko'); return; }
+  Promise.all(slk.map(f=>f.arrayBuffer()
+    .then(buf=>{ try{ return {name:f.name.replace(/\.slk$/i,''), rooms:parseSLK(buf)}; }
+                 catch(e){ return {name:f.name, err:e.message}; } })
+    .catch(e=>({name:f.name, err:'lecture impossible ('+e.message+')'}))))
+  .then(results=>{
+    let added=0; const errs=[];
+    results.forEach(r=>{ if(r.err){ errs.push(`${r.name} : ${r.err}`); return; }
+      appendSlk(r.name, r.rooms); added+=r.rooms.length; });
+    fileHandle=null; $('projName').value=PROJECT_NAME; persist(); render();
+    const nbBat=new Set(ROOMS.map(x=>x.bat||'')).size;
+    if(added){ msg(`${added} pièces ajoutées (${nbBat} bâtiment(s), ${ROOMS.length} pièces au total).`+(errs.length?' Erreurs : '+errs.join(' ; '):''), errs.length?'ko':'ok'); showView('pieces'); }
+    else msg('Aucune pièce importée. '+errs.join(' ; '),'ko');
+  });
+}
+function handleFile(file){ handleFiles(file?[file]:[]); }
+function msg(t,kind){ const el=$('importMsg'); el.textContent=t;
+  el.style.color=kind==='ko'?'var(--ko)':(kind==='ok'?'var(--ok)':'var(--muted)'); }
+
+/* ============================ INIT ============================ */
+document.querySelectorAll('input,select').forEach(el=>{
+  if(el.closest('#catTbl')||el.closest('#tbl')) return;
+  if(['fileSlk','fileJson','projName','model','ssModel','ssEnergy'].includes(el.id)) return;
+  if(el.id==='tolMin'||el.id==='tolMax') el.addEventListener('change',()=>{clampTol(el.id);render();});
+  else el.addEventListener('change',()=>render());
+  if(el.type==='number'&&el.id!=='tolMin'&&el.id!=='tolMax') el.addEventListener('input',()=>render());
+});
+$('model').addEventListener('change',onModelChange);
+$('allowTypes').addEventListener('change',()=>render());   // cases a cocher dynamiques (delegation)
+$('ssEnergy').addEventListener('change',()=>{ populateSSModel($('ssModel').value); overrides={}; persist(); render(); });
+$('ssModel').addEventListener('change',()=>{ overrides={}; persist(); render(); });
+$('projName').addEventListener('input',()=>{ PROJECT_NAME=$('projName').value; persist(); renderProjInfo(); });
+$('fileSlk').addEventListener('change',e=>{ handleFiles(e.target.files); e.target.value=''; });
+$('fileJson').addEventListener('change',e=>{ handleJson(e.target.files[0]); e.target.value=''; });
+(function(){ const dz=$('dropzone');
+  ['dragenter','dragover'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();dz.style.background='#eef6ff';dz.style.borderColor='var(--bleu2)';}));
+  ['dragleave','drop'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();dz.style.background='#fbfdff';dz.style.borderColor='var(--bord)';}));
+  dz.addEventListener('drop',e=>{ handleFiles(e.dataTransfer.files); });
+  dz.addEventListener('click',()=>$('fileSlk').click());
+})();
+
+populateModelSelect();
+restore();
+renderCatalog();
+render();
+(function(){ let v=''; try{ v=localStorage.getItem('finimetal_view')||''; }catch(e){}
+  if(!v) v = ROOMS.length? 'dim' : 'projet';
+  showView(v);
+})();
+</script>
+</body>
+</html>
